@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Scripture Study Studio</title>
+<meta name="description" content="A guided Bible study workbook for growing deeper in God's Word.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ivory:#FAF7F0;
+  --cream:#F4EFE5;
+  --sage:#A8B39F;
+  --olive:#59624F;
+  --rose:#C9AAA3;
+  --taupe:#B7AA98;
+  --ink:#343530;
+
+  --paper:#FFFFFF;
+  --line:#E3DCCE;
+  --line-soft:#EFE9DD;
+  --muted:#7C776C;
+  --shadow:0 1px 2px rgba(52,53,48,.04), 0 8px 24px -12px rgba(52,53,48,.18);
+  --shadow-lift:0 2px 6px rgba(52,53,48,.06), 0 18px 40px -18px rgba(52,53,48,.26);
+
+  --display:"Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --ui:"Karla", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  --fs:16px;
+  --r-sm:6px; --r:12px; --r-lg:18px;
+  --sidebar:264px;
+  --ease:cubic-bezier(.4,.14,.3,1);
+}
+:root:not([data-theme="light"]){ color-scheme:light; }
+html[data-theme="dark"]{
+  --ivory:#23261F;
+  --cream:#2A2E26;
+  --sage:#8E9C86;
+  --olive:#C3CDB9;
+  --rose:#D3B3AC;
+  --taupe:#9E9384;
+  --ink:#EDE9DF;
+  --paper:#2E322A;
+  --line:#3E4438;
+  --line-soft:#373C31;
+  --muted:#A8A396;
+  --shadow:0 1px 2px rgba(0,0,0,.25), 0 8px 24px -12px rgba(0,0,0,.5);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.3), 0 18px 40px -18px rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:var(--ui);
+  font-size:var(--fs);
+  line-height:1.6;
+  color:var(--ink);
+  background:var(--ivory);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;line-height:1.18;margin:0;letter-spacing:.005em;}
+p{margin:0 0 1em;}
+a{color:var(--olive);}
+button{font:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--olive);outline-offset:3px;border-radius:4px;}
+::selection{background:var(--rose);color:#fff;}
+
+/* ---------- shell ---------- */
+.app{display:flex;min-height:100%;}
+
+.sidebar{
+  width:var(--sidebar);flex:0 0 var(--sidebar);
+  background:var(--cream);
+  border-right:1px solid var(--line);
+  padding:28px 18px 24px;
+  display:flex;flex-direction:column;gap:22px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+}
+.brand{display:flex;flex-direction:column;gap:6px;padding:0 8px;}
+.brand .mark{font-family:var(--display);font-size:1.45rem;line-height:1.1;color:var(--ink);}
+.brand .mark .star{color:var(--rose);font-size:.8em;vertical-align:.12em;}
+.brand .tag{font-size:.72rem;letter-spacing:.06em;color:var(--muted);}
+.sprig{display:block;color:var(--sage);opacity:.85;}
+
+.nav{display:flex;flex-direction:column;gap:2px;}
+.nav .group-label{
+  font-size:.7rem;letter-spacing:.09em;color:var(--muted);
+  padding:14px 10px 6px;font-weight:600;
+}
+.nav button{
+  display:flex;align-items:center;gap:11px;width:100%;
+  background:none;border:0;cursor:pointer;
+  padding:9px 10px;border-radius:var(--r-sm);
+  font-size:.92rem;color:var(--ink);text-align:left;
+  transition:background .16s var(--ease), color .16s var(--ease);
+}
+.nav button svg{flex:0 0 17px;opacity:.72;}
+.nav button:hover{background:rgba(168,179,159,.22);}
+.nav button[aria-current="page"]{background:var(--paper);color:var(--olive);font-weight:600;box-shadow:var(--shadow);}
+.nav button[aria-current="page"] svg{opacity:1;}
+
+.side-foot{margin-top:auto;padding:14px 10px 0;border-top:1px solid var(--line);font-size:.72rem;color:var(--muted);line-height:1.5;}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.view{padding:44px 48px 96px;max-width:1080px;width:100%;margin:0 auto;flex:1;}
+.view[hidden]{display:none;}
+
+.page-head{margin-bottom:34px;}
+.page-head h1{font-size:2.6rem;}
+.page-head .lede{color:var(--muted);max-width:62ch;margin-top:10px;font-size:1rem;}
+.eyebrow{font-family:var(--display);font-size:1.05rem;color:var(--sage);font-style:italic;margin-bottom:2px;}
+
+/* ---------- pieces ---------- */
+.card{
+  background:var(--paper);border:1px solid var(--line-soft);
+  border-radius:var(--r);padding:22px;box-shadow:var(--shadow);
+}
+.section-title{
+  display:flex;align-items:center;gap:12px;margin:38px 0 16px;
+}
+.section-title h2{font-size:1.6rem;}
+.section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+.grid{display:grid;gap:16px;}
+.grid.c2{grid-template-columns:repeat(2,1fr);}
+.grid.c3{grid-template-columns:repeat(3,1fr);}
+.grid.c4{grid-template-columns:repeat(4,1fr);}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 18px;min-height:42px;
+  border-radius:999px;border:1px solid var(--olive);
+  background:var(--olive);color:#FBF9F4;
+  font-size:.9rem;font-weight:600;cursor:pointer;
+  transition:background .16s var(--ease),border-color .16s var(--ease),color .16s var(--ease),transform .12s var(--ease);
+}
+html[data-theme="dark"] .btn:not(.ghost):not(.quiet):not(.danger){color:#23261F;}
+.btn:hover{background:#4A5242;border-color:#4A5242;}
+html[data-theme="dark"] .btn:not(.ghost):not(.quiet):not(.danger):hover{background:#D5DFCB;border-color:#D5DFCB;color:#23261F;}
+html[data-theme="dark"] .btn.ghost:hover{background:var(--cream);border-color:var(--sage);color:var(--ink);}
+html[data-theme="dark"] .btn.quiet:hover{background:var(--cream);color:var(--ink);}
+.btn:active{transform:translateY(1px);}
+.btn.ghost{background:transparent;color:var(--olive);border-color:var(--line);}
+.btn.ghost:hover{background:var(--cream);border-color:var(--sage);}
+.btn.quiet{background:transparent;border-color:transparent;color:var(--muted);padding:8px 12px;font-weight:500;}
+.btn.quiet:hover{background:var(--cream);color:var(--ink);}
+.btn.danger{background:transparent;color:#9A5B52;border-color:#D9BDB7;}
+.btn.danger:hover{background:#F6EAE7;}
+html[data-theme="dark"] .btn.danger{color:#E0AFA6;border-color:#5C4741;}
+html[data-theme="dark"] .btn.danger:hover{background:#3A302C;}
+.btn.sm{min-height:34px;padding:6px 14px;font-size:.82rem;}
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;}
+
+.field{display:block;margin-bottom:18px;}
+.field > .lbl{display:block;font-size:.82rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.field .hint{display:block;font-size:.78rem;color:var(--muted);font-weight:400;margin-top:-2px;margin-bottom:6px;font-style:italic;font-family:var(--display);font-size:.92rem;}
+input[type=text],input[type=date],input[type=search],select,textarea{
+  width:100%;font:inherit;font-size:.95rem;color:var(--ink);
+  background:var(--paper);
+  border:1px solid var(--line);border-radius:var(--r-sm);
+  padding:10px 12px;transition:border-color .16s var(--ease), box-shadow .16s var(--ease);
+}
+textarea{resize:vertical;min-height:84px;line-height:1.65;}
+input:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--sage);box-shadow:0 0 0 3px rgba(168,179,159,.22);
+}
+input::placeholder,textarea::placeholder{color:var(--taupe);}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%237C776C' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px;}
+
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper);font-size:.78rem;color:var(--muted);cursor:pointer;
+  transition:all .15s var(--ease);
+}
+.chip:hover{border-color:var(--sage);color:var(--ink);}
+.chip[aria-pressed="true"]{background:var(--sage);border-color:var(--sage);color:#fff;font-weight:600;}
+html[data-theme="dark"] .chip[aria-pressed="true"]{color:#23261F;}
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--cream);border:1px solid var(--line-soft);font-size:.72rem;color:var(--muted);}
+.pill.sample{background:#F2EDE0;color:#8A7C5F;border-color:#E2D8C0;}
+html[data-theme="dark"] .pill.sample{background:#3A3A2C;color:#CBBE9C;border-color:#4A4837;}
+
+.fav{background:none;border:0;cursor:pointer;padding:4px;line-height:0;color:var(--taupe);transition:color .15s var(--ease),transform .15s var(--ease);}
+.fav:hover{transform:scale(1.12);color:var(--rose);}
+.fav[aria-pressed="true"]{color:var(--rose);}
+
+.empty{
+  text-align:center;padding:52px 24px;border:1px dashed var(--line);
+  border-radius:var(--r);background:var(--cream);
+}
+.empty h3{font-size:1.5rem;margin-bottom:6px;}
+.empty p{color:var(--muted);max-width:40ch;margin:0 auto 18px;}
+.empty .sprig{margin:0 auto 14px;}
+
+/* ---------- home ---------- */
+.hero{
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  padding:34px 34px 30px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.hero h1{font-size:3rem;max-width:14ch;}
+.hero .lede{color:var(--muted);max-width:56ch;margin-top:12px;}
+.hero .corner{position:absolute;right:-14px;top:-10px;color:var(--sage);opacity:.28;pointer-events:none;}
+
+.continue{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between;}
+.continue .meta{display:flex;flex-wrap:wrap;gap:22px;}
+.continue .meta div{min-width:110px;}
+.continue .k{font-size:.72rem;color:var(--muted);letter-spacing:.04em;}
+.continue .v{font-family:var(--display);font-size:1.25rem;color:var(--ink);}
+
+.method-card{
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--r);
+  padding:20px;display:flex;flex-direction:column;gap:9px;
+  box-shadow:var(--shadow);transition:box-shadow .2s var(--ease),border-color .2s var(--ease);
+}
+.method-card:hover{box-shadow:var(--shadow-lift);border-color:var(--sage);}
+.method-card .ico{color:var(--sage);line-height:0;}
+.method-card h3{font-size:1.32rem;}
+.method-card p{font-size:.86rem;color:var(--muted);margin:0;flex:1;}
+.method-card .btn-row{margin-top:6px;}
+
+.stat{background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);}
+.stat .n{font-family:var(--display);font-size:2.1rem;line-height:1.1;color:var(--olive);}
+.stat .l{font-size:.78rem;color:var(--muted);margin-top:2px;}
+
+.prompt-card{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--r-lg);
+  padding:32px 34px;text-align:center;
+}
+.prompt-card .q{font-family:var(--display);font-style:italic;font-size:1.65rem;line-height:1.35;max-width:32ch;margin:12px auto 18px;}
+
+/* ---------- worksheet / paper ---------- */
+.paper{
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lift);
+  padding:40px 44px 36px;position:relative;
+}
+.paper::before{
+  content:"";position:absolute;left:22px;top:26px;bottom:26px;width:1px;background:var(--rose);opacity:.55;
+}
+.paper-head{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px;display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;justify-content:space-between;}
+.paper-head h2{font-size:2rem;}
+.paper-head .sub{color:var(--muted);font-size:.86rem;margin-top:4px;}
+
+.ws-section{border-top:1px solid var(--line-soft);padding-top:20px;margin-top:20px;}
+.ws-section:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.ws-section > summary{
+  list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;
+  font-family:var(--display);font-size:1.45rem;color:var(--ink);padding:2px 0 12px;
+}
+.ws-section > summary::-webkit-details-marker{display:none;}
+.ws-section > summary .caret{margin-left:auto;color:var(--taupe);transition:transform .2s var(--ease);}
+.ws-section[open] > summary .caret{transform:rotate(180deg);}
+.ws-section > summary .step{
+  width:26px;height:26px;border-radius:50%;border:1px solid var(--sage);color:var(--olive);
+  font-family:var(--ui);font-size:.74rem;font-weight:600;
+  display:grid;place-items:center;flex:0 0 auto;
+}
+.ws-section .body{padding-left:2px;}
+
+.progress-rail{display:flex;align-items:center;gap:10px;margin-bottom:24px;font-size:.78rem;color:var(--muted);}
+.progress-rail .track{flex:1;height:4px;background:var(--line-soft);border-radius:999px;overflow:hidden;}
+.progress-rail .fill{height:100%;background:var(--sage);border-radius:999px;transition:width .4s var(--ease);}
+
+.onesentence{
+  background:var(--cream);border:1px solid var(--line);border-left:3px solid var(--rose);
+  border-radius:var(--r-sm);padding:18px 20px;margin-top:8px;
+}
+.onesentence .lbl{font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:8px;display:block;}
+
+.repeater-item{border:1px solid var(--line-soft);border-radius:var(--r-sm);padding:16px;margin-bottom:12px;background:var(--cream);}
+.repeater-item .rm{float:right;}
+
+.ws-actions{
+  position:sticky;bottom:0;background:linear-gradient(to top,var(--ivory) 60%,rgba(250,247,240,0));
+  padding:18px 0 4px;margin-top:26px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+}
+html[data-theme="dark"] .ws-actions{background:linear-gradient(to top,var(--ivory) 60%,rgba(35,38,31,0));}
+.ws-actions .autosave{font-size:.76rem;color:var(--muted);margin-left:auto;font-style:italic;font-family:var(--display);font-size:.95rem;}
+
+/* ---------- teaching page ---------- */
+.teach{max-width:74ch;}
+.teach h3{font-size:1.5rem;margin:30px 0 8px;}
+.teach p,.teach li{font-size:1rem;color:var(--ink);}
+.teach ol,.teach ul{padding-left:1.2em;margin:0 0 1em;}
+.teach li{margin-bottom:8px;}
+.teach .qlist{background:var(--cream);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px 14px;}
+.teach .qlist li{font-family:var(--display);font-size:1.15rem;color:var(--olive);}
+.example{
+  border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--paper);
+}
+.example .ex-head{background:var(--cream);padding:10px 18px;border-bottom:1px solid var(--line);font-size:.76rem;font-weight:600;color:var(--muted);letter-spacing:.04em;}
+.example .ex-body{padding:20px 22px 6px;}
+.example .ex-body .x-k{font-size:.78rem;font-weight:600;color:var(--olive);margin-bottom:2px;}
+.example .ex-body .x-v{margin-bottom:16px;color:var(--ink);font-size:.94rem;}
+
+/* ---------- lists ---------- */
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:20px;}
+.toolbar .search{flex:1;min-width:200px;position:relative;}
+.toolbar .search input{padding-left:36px;}
+.toolbar .search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--taupe);}
+.toolbar select{width:auto;min-width:150px;}
+
+.row-card{
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--r);
+  padding:18px 20px;box-shadow:var(--shadow);
+  display:flex;gap:16px;align-items:flex-start;
+}
+.row-card .rc-main{flex:1;min-width:0;}
+.row-card h3{font-size:1.3rem;margin-bottom:2px;overflow-wrap:anywhere;}
+.row-card .rc-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;font-size:.76rem;color:var(--muted);}
+.row-card .rc-excerpt{color:var(--muted);font-size:.88rem;margin-top:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.row-card .rc-actions{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+
+/* ---------- reading tracker ---------- */
+.ring-wrap{display:flex;flex-wrap:wrap;gap:30px;align-items:center;}
+.ring{position:relative;width:148px;height:148px;flex:0 0 auto;}
+.ring svg{transform:rotate(-90deg);}
+.ring .ring-bg{stroke:var(--line);}
+.ring .ring-fg{stroke:var(--sage);stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease);}
+.ring .ring-label{position:absolute;inset:0;display:grid;place-content:center;text-align:center;}
+.ring .ring-label .n{font-family:var(--display);font-size:2.1rem;line-height:1;color:var(--olive);}
+.ring .ring-label .l{font-size:.7rem;color:var(--muted);}
+
+.bar{height:6px;background:var(--line-soft);border-radius:999px;overflow:hidden;margin-top:6px;}
+.bar span{display:block;height:100%;background:var(--sage);border-radius:999px;transition:width .6s var(--ease);}
+.bar.rose span{background:var(--rose);}
+
+.books{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:8px;}
+.book{
+  display:flex;align-items:center;gap:9px;width:100%;
+  background:var(--paper);border:1px solid var(--line-soft);border-radius:var(--r-sm);
+  padding:9px 12px;cursor:pointer;text-align:left;font-size:.86rem;
+  transition:border-color .15s var(--ease),background .15s var(--ease);
+}
+.book:hover{border-color:var(--sage);}
+.book .dot{width:10px;height:10px;border-radius:50%;border:1px solid var(--taupe);flex:0 0 auto;}
+.book[data-status="reading"]{background:var(--cream);}
+.book[data-status="reading"] .dot{background:var(--rose);border-color:var(--rose);}
+.book[data-status="done"]{background:rgba(168,179,159,.18);border-color:var(--sage);}
+.book[data-status="done"] .dot{background:var(--sage);border-color:var(--sage);}
+.book[data-status="done"] .bn{color:var(--olive);font-weight:600;}
+.book .bn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.78rem;color:var(--muted);margin-bottom:14px;}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;border:1px solid var(--taupe);}
+
+/* ---------- gratitude ---------- */
+.g-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;max-width:560px;}
+.g-day{
+  aspect-ratio:1;border-radius:50%;border:1px solid var(--line);background:var(--paper);
+  display:grid;place-items:center;font-size:.8rem;color:var(--muted);cursor:pointer;
+  transition:all .15s var(--ease);
+}
+.g-day:hover{border-color:var(--sage);color:var(--ink);}
+.g-day[data-done="true"]{background:var(--sage);border-color:var(--sage);color:#fff;font-weight:600;}
+html[data-theme="dark"] .g-day[data-done="true"]{color:#23261F;}
+.g-day[aria-current="true"]{box-shadow:0 0 0 3px rgba(201,170,163,.45);}
+
+/* ---------- mobile nav ---------- */
+.mobilebar{display:none;}
+.sheet{display:none;}
+
+/* ---------- modal ---------- */
+.scrim{
+  position:fixed;inset:0;background:rgba(52,53,48,.42);
+  display:grid;place-items:center;padding:20px;z-index:200;
+  opacity:0;pointer-events:none;transition:opacity .22s var(--ease);
+}
+.scrim.on{opacity:1;pointer-events:auto;}
+.modal{
+  background:var(--paper);border-radius:var(--r-lg);border:1px solid var(--line);
+  padding:30px 32px;max-width:520px;width:100%;box-shadow:var(--shadow-lift);
+  transform:translateY(10px) scale(.99);transition:transform .22s var(--ease);
+  max-height:86vh;overflow-y:auto;
+}
+.scrim.on .modal{transform:none;}
+.modal h2{font-size:1.8rem;margin-bottom:8px;}
+.modal p{color:var(--muted);}
+.modal .btn-row{margin-top:22px;justify-content:flex-end;}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);
+  background:var(--olive);color:#FBF9F4;padding:10px 20px;border-radius:999px;
+  font-size:.85rem;font-weight:600;box-shadow:var(--shadow-lift);
+  opacity:0;pointer-events:none;transition:opacity .25s var(--ease),transform .25s var(--ease);z-index:300;
+}
+html[data-theme="dark"] .toast{color:#23261F;}
+.toast.on{opacity:1;transform:translate(-50%,0);}
+
+/* ---------- onboarding ---------- */
+.welcome{text-align:center;}
+.welcome h2{font-size:2.3rem;}
+.welcome .sprig{margin:0 auto 14px;}
+.welcome .btn-row{flex-direction:column;align-items:stretch;margin-top:26px;}
+.welcome .btn-row .btn{width:100%;}
+
+/* ---------- responsive ---------- */
+@media (max-width:1040px){
+  .grid.c3{grid-template-columns:repeat(2,1fr);}
+  .grid.c4{grid-template-columns:repeat(2,1fr);}
+  .view{padding:36px 32px 96px;}
+}
+@media (max-width:860px){
+  .sidebar{display:none;}
+  .view{padding:26px 18px 120px;}
+  .page-head h1{font-size:2.1rem;}
+  .hero{padding:26px 22px;}
+  .hero h1{font-size:2.3rem;}
+  .hero .corner{display:none;}
+  .paper{padding:26px 20px 24px;}
+  .paper::before{display:none;}
+  .paper-head h2{font-size:1.65rem;}
+  .grid.c2,.grid.c3{grid-template-columns:1fr;}
+  .grid.c4{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat{padding:14px 16px;}
+  .stat .n{font-size:1.6rem;}
+  .prompt-card{padding:24px 20px;}
+  .prompt-card .q{font-size:1.35rem;}
+  input,select,textarea{font-size:16px;}
+
+  .mobilebar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:150;
+    background:var(--cream);border-top:1px solid var(--line);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+  .mobilebar button{
+    flex:1;background:none;border:0;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    padding:6px 2px;font-size:.66rem;color:var(--muted);min-height:52px;
+  }
+  .mobilebar button[aria-current="page"]{color:var(--olive);font-weight:600;}
+  .mobilebar button svg{opacity:.8;}
+  .mobilebar button[aria-current="page"] svg{opacity:1;}
+
+  .sheet{
+    display:block;position:fixed;left:0;right:0;bottom:0;z-index:180;
+    background:var(--paper);border-top:1px solid var(--line);
+    border-radius:var(--r-lg) var(--r-lg) 0 0;
+    padding:18px 18px calc(22px + env(safe-area-inset-bottom));
+    transform:translateY(103%);transition:transform .26s var(--ease);
+    box-shadow:0 -12px 40px -16px rgba(52,53,48,.4);
+  }
+  .sheet.on{transform:none;}
+  .sheet .grab{width:38px;height:4px;border-radius:999px;background:var(--line);margin:0 auto 14px;}
+  .sheet .nav button{padding:12px 10px;font-size:1rem;}
+  .ws-actions{position:sticky;bottom:64px;}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important;}
+}
+
+/* ---------- print ---------- */
+@media print{
+  @page{margin:16mm;}
+  body{background:#fff;font-size:11.5pt;}
+  .sidebar,.mobilebar,.sheet,.scrim,.toast,.ws-actions,.toolbar,.no-print,.rc-actions,.progress-rail{display:none !important;}
+  .view{padding:0;max-width:none;}
+  .paper,.card,.row-card{box-shadow:none !important;border:0;padding:0;}
+  .paper::before{display:none;}
+  .ws-section{border-top:1px solid #DDD6C8;break-inside:avoid;page-break-inside:avoid;}
+  .ws-section > summary .caret{display:none;}
+  .ws-section > summary{font-size:15pt;}
+  input::placeholder,textarea::placeholder{color:transparent !important;opacity:0 !important;}
+  textarea,input[type=text],input[type=date]{
+    border:0;border-bottom:1px solid #DDD6C8;border-radius:0;padding:2px 0;
+    background:none;resize:none;height:auto;min-height:0;
+  }
+  .print-foot{display:block !important;margin-top:28px;padding-top:10px;border-top:1px solid #DDD6C8;font-size:8.5pt;color:#8A8577;text-align:center;}
+}
+.print-foot{display:none;}
+html[data-printfoot="off"] .print-foot{display:none !important;}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="sprig" width="48" height="16" viewBox="0 0 48 16" fill="none" aria-hidden="true"><path d="M4 10h40" stroke="currentColor" stroke-width=".9" stroke-linecap="round"/><ellipse cx="14" cy="6.6" rx="4.6" ry="2.1" transform="rotate(-24 14 6.6)" fill="currentColor" opacity=".45"/><ellipse cx="22" cy="6.2" rx="4.6" ry="2.1" transform="rotate(-24 22 6.2)" fill="currentColor" opacity=".45"/><ellipse cx="30" cy="6.6" rx="4.6" ry="2.1" transform="rotate(-24 30 6.6)" fill="currentColor" opacity=".45"/><circle cx="18" cy="12.4" r="1.5" fill="currentColor" opacity=".6"/><circle cx="27" cy="12.4" r="1.5" fill="currentColor" opacity=".6"/></svg>
+      <span class="mark"><span class="star">✦</span> Scripture Study Studio</span>
+      <span class="tag">A guided Bible study workbook</span>
+    </div>
+    <nav class="nav" id="sideNav" aria-label="Main"></nav>
+    <div class="side-foot">
+      Your entries are stored on this device only. No account needed.
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+    <div class="view" id="view" tabindex="-1"></div>
+  </main>
+
+  <nav class="mobilebar" id="mobileNav" aria-label="Main"></nav>
+
+  <div class="sheet" id="sheet" role="dialog" aria-label="More sections" aria-modal="false">
+    <div class="grab"></div>
+    <nav class="nav" id="sheetNav"></nav>
+  </div>
+
+  <div class="scrim" id="scrim" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal" id="modal"></div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+<script>
+/* ============================================================
+   Scripture Study Studio — Belalumi Studio
+   Single file. No dependencies. All data in localStorage.
+   ============================================================ */
+"use strict";
+
+/* ---------- tiny helpers ---------- */
+const $  = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const todayISO = () => new Date().toISOString().slice(0,10);
+function fmtDate(iso){
+  if(!iso) return "—";
+  const d = new Date(iso + (iso.length === 10 ? "T12:00:00" : ""));
+  if(isNaN(d)) return "—";
+  return d.toLocaleDateString(undefined, {month:"short", day:"numeric", year:"numeric"});
+}
+function el(tag, attrs = {}, html = ""){
+  const n = document.createElement(tag);
+  for(const k in attrs){ if(attrs[k] !== null && attrs[k] !== undefined) n.setAttribute(k, attrs[k]); }
+  if(html) n.innerHTML = html;
+  return n;
+}
+
+/* ---------- icons ---------- */
+const I = {
+  home:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/></svg>',
+  book:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v18H5.5A1.5 1.5 0 0 1 4 19.5Z"/><path d="M8 3v18"/></svg>',
+  folder:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5A1.5 1.5 0 0 1 4.5 6h4l2 2.5h9A1.5 1.5 0 0 1 21 10v8a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18Z"/></svg>',
+  check:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h10M4 12h10M4 18h7"/><path d="M16 17.5 18 19.5 22 15"/></svg>',
+  hands:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21c-3-1.5-6.5-4.2-6.5-8.3 0-2.3 1.6-4.2 3.8-4.2 1.3 0 2.2.7 2.7 1.5.5-.8 1.4-1.5 2.7-1.5 2.2 0 3.8 1.9 3.8 4.2C18.5 16.8 15 19.5 12 21Z"/><path d="M12 8V3"/></svg>',
+  mic:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v3"/></svg>',
+  leaf:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4c0 8-4.5 13-11 13-2 0-3.5-.6-4.5-1.5C6 9 11.5 4.5 20 4Z"/><path d="M4 20c2-4 5-7 9-9"/></svg>',
+  pen:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16.5 4.5a2.1 2.1 0 0 1 3 3L8 19l-4 1Z"/><path d="M14.5 6.5l3 3"/></svg>',
+  heart:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20Z"/></svg>',
+  heartFill:'<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20Z"/></svg>',
+  heartLine:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 8.2a4.1 4.1 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20Z"/></svg>',
+  gear:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.2M12 18.8V21M4.6 7.8l1.9 1.1M17.5 15.1l1.9 1.1M4.6 16.2l1.9-1.1M17.5 8.9l1.9-1.1"/></svg>',
+  dots:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="19" cy="12" r="1.3" fill="currentColor"/></svg>',
+  search:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>',
+  caret:'<svg class="caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m5 9 7 7 7-7"/></svg>',
+  back:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5 8 12l7 7"/></svg>',
+  sprigSm:'<svg class="sprig" width="48" height="16" viewBox="0 0 48 16" fill="none" aria-hidden="true"><path d="M4 10h40" stroke="currentColor" stroke-width=".9" stroke-linecap="round"/><ellipse cx="14" cy="6.6" rx="4.6" ry="2.1" transform="rotate(-24 14 6.6)" fill="currentColor" opacity=".45"/><ellipse cx="22" cy="6.2" rx="4.6" ry="2.1" transform="rotate(-24 22 6.2)" fill="currentColor" opacity=".45"/><ellipse cx="30" cy="6.6" rx="4.6" ry="2.1" transform="rotate(-24 30 6.6)" fill="currentColor" opacity=".45"/><circle cx="18" cy="12.4" r="1.5" fill="currentColor" opacity=".6"/><circle cx="27" cy="12.4" r="1.5" fill="currentColor" opacity=".6"/></svg>',
+  star:'<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5 13.4 9 20 10.4 13.4 11.8 12 18.3 10.6 11.8 4 10.4 10.6 9Z"/></svg>',
+  corner:'<svg width="180" height="150" viewBox="0 0 180 150" fill="none" aria-hidden="true"><path d="M170 10C120 22 84 52 66 96" stroke="currentColor" stroke-width="1.1"/><path d="M148 22c-1.6-5 .4-10.6 4.6-13.2 1.8 4.8.2 10.3-4.6 13.2Zm0 0c-4.6-2.4-6.8-7.8-5.4-12.6 4.4 1.8 6.6 7.4 5.4 12.6Z" fill="currentColor" opacity=".6"/><path d="M120 42c-1.6-5 .4-10.6 4.6-13.2 1.8 4.8.2 10.3-4.6 13.2Zm0 0c-4.6-2.4-6.8-7.8-5.4-12.6 4.4 1.8 6.6 7.4 5.4 12.6Z" fill="currentColor" opacity=".6"/><path d="M97 70c-1.6-5 .4-10.6 4.6-13.2 1.8 4.8.2 10.3-4.6 13.2Zm0 0c-4.6-2.4-6.8-7.8-5.4-12.6 4.4 1.8 6.6 7.4 5.4 12.6Z" fill="currentColor" opacity=".6"/></svg>',
+  mSoap:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H19v16H5.5A1.5 1.5 0 0 1 4 18.5Z"/><path d="M8 9h7M8 12.5h7M8 16h4"/></svg>',
+  mVerse:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v6M12 15v6M3 12h6M15 12h6"/></svg>',
+  mChar:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/></svg>',
+  mChap:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h7v16H4zM13 4h7v16h-7z"/><path d="M6.5 8h2M15.5 8h2"/></svg>',
+  mTheme:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6h14M5 12h14M5 18h9"/><circle cx="19" cy="18" r="2"/></svg>',
+  mTopic:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="6"/><path d="m14.5 14.5 5 5"/></svg>'
+};
+
+/* ---------- Bible books ---------- */
+const OT = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi"];
+const NT = ["Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
+
+/* ---------- reflection prompts (40) ---------- */
+const PROMPTS = [
+  "What is God teaching you through His Word today?",
+  "How can you apply what you learned this week?",
+  "What truth do you most want to remember?",
+  "Where have you seen God's faithfulness lately?",
+  "What are you asking God for right now, and why?",
+  "Which part of God's character are you leaning on today?",
+  "What has been heavy on your heart this week?",
+  "Where do you need patience right now?",
+  "What is one thing you are grateful for that you usually overlook?",
+  "Who in your life could use encouragement this week?",
+  "What is God inviting you to let go of?",
+  "When did you last feel close to God? What was happening?",
+  "What worry would you like to hand over today?",
+  "What does trusting God look like in your circumstances right now?",
+  "What prayer have you stopped praying, and why?",
+  "Where is God asking you to be obedient in something small?",
+  "Who do you need to forgive, and what makes it difficult?",
+  "Where do you need wisdom for a decision ahead?",
+  "How has a difficult season shaped your faith?",
+  "What have you learned about God that you did not know a year ago?",
+  "What does rest look like for you this week?",
+  "Where have you been striving instead of trusting?",
+  "What is one way you can serve someone quietly this week?",
+  "What are you hoping for right now?",
+  "How would you describe your relationship with God in one sentence?",
+  "What Scripture has stayed with you recently?",
+  "Where do you need peace today?",
+  "What would change if you truly believed God is with you?",
+  "What are you learning about your own identity in Christ?",
+  "What distraction is crowding out your time in the Word?",
+  "When have you seen an answered prayer you almost forgot about?",
+  "What does faithfulness look like in your everyday routine?",
+  "Where do you need courage right now?",
+  "How can you make more space for God this week?",
+  "What relationship needs your attention and prayer?",
+  "What is one habit that helps you draw near to God?",
+  "What are you tempted to control instead of surrender?",
+  "How have you grown in the last six months?",
+  "What do you want your faith to look like a year from now?",
+  "What is one thing you want to thank God for right now?"
+];
+
+/* ---------- prayer categories ---------- */
+const PRAYER_CATS = ["Praise","Thanksgiving","Guidance","Relationships","Family","Work","Personal Growth","Other"];
+const JOURNAL_CATS = ["Blank entry","Devotional reflection","Prayer","Scripture reflection","Gratitude"];
+const HIGHLIGHTS = ["God","People","Commands","Promises","Warnings","Key ideas"];
+
+/* ============================================================
+   THE SIX STUDY METHODS
+   Each method carries its teaching page and its worksheet.
+   One renderer drives all six.
+   ============================================================ */
+const METHODS = [
+{
+  id:"soap", name:"SOAP Study", icon:I.mSoap,
+  blurb:"Read a passage, notice what it says, and respond to it. The simplest place to begin.",
+  minutes:"15–20 minutes",
+  what:"SOAP is a four-step rhythm for reading a passage slowly: write the Scripture, note your observations, consider the application, and close in prayer. It takes one short passage and turns it into a conversation with God rather than a box to check.",
+  why:"Reading is easy to rush. SOAP slows you down enough to notice what is actually on the page, and it ends with response rather than information. It is also the easiest method to keep up on a busy week, which is why so many women start here.",
+  when:"Use SOAP for daily reading, for a verse that stood out in a sermon, or any time you have a short window and want it to count. It works with as little as one verse.",
+  how:[
+    ["Scripture","Write out the passage, or note the reference and the phrases that stand out. Copying it by hand slows your eye down."],
+    ["Observation","Say what the passage actually says before deciding what it means. Look for repeated words, contrasts, commands, and what the passage shows about God."],
+    ["Application","Ask what this means for your life this week. Keep it specific enough to act on."],
+    ["Prayer","Pray the passage back. Thank God for what you saw, and ask for help where you need it."]
+  ],
+  questions:["What stands out to me in this passage?","What words or ideas repeat?","What does this show me about God?","What does this show me about people?","Is there something here to do, believe, or stop?","What would change if I lived like this were true?"],
+  example:{
+    label:"Example study — Philippians 4:6–7",
+    rows:[
+      ["Scripture","Philippians 4:6–7 (read in your own Bible). Paul writes to the Philippians about anxiety, prayer, and the peace that follows."],
+      ["Observation","The instruction is not simply to stop worrying but to replace worry with prayer, and to include thanksgiving in it. The peace described is said to guard the heart and mind, which is protective language."],
+      ["Application","When I catch myself running the same worry in a loop, I will write it down as a prayer instead, and name one thing I am thankful for alongside it."],
+      ["Prayer","Lord, I hand You the thing I keep turning over. Thank You for what You have already carried me through. Please guard my mind this week."]
+    ]
+  },
+  sections:[
+    {t:"Scripture", note:"Take your time with this passage.", fields:[
+      {id:"ref", l:"Bible reference", type:"text", ph:"e.g. Philippians 4:6–7", title:true},
+      {id:"translation", l:"Translation (optional)", type:"text", ph:"e.g. ESV, NIV, KJV"},
+      {id:"passage", l:"Passage notes", type:"area", rows:5, ph:"Write out the passage, or the phrases that stand out to you."}
+    ]},
+    {t:"Observation", note:"Write what stands out.", fields:[
+      {id:"stands", l:"What stands out?", type:"area", rows:3},
+      {id:"happening", l:"What is happening in this passage?", type:"area", rows:3},
+      {id:"repeat", l:"What words or ideas are repeated?", type:"area", rows:2},
+      {id:"aboutGod", l:"What do you learn about God here?", type:"area", rows:3}
+    ]},
+    {t:"Application", note:"Bring it into this week.", fields:[
+      {id:"teach", l:"What does this teach me?", type:"area", rows:3},
+      {id:"apply", l:"How can I apply this to my life?", type:"area", rows:3},
+      {id:"action", l:"Is there an action I need to take?", type:"area", rows:2}
+    ]},
+    {t:"Prayer", note:"Pause. Reflect. Pray.", fields:[
+      {id:"prayer", l:"Write your prayer", type:"area", rows:5, ph:"Pray the passage back in your own words."}
+    ]}
+  ]
+},
+{
+  id:"verse", name:"Verse Mapping", icon:I.mVerse,
+  blurb:"Take one verse apart slowly — key words, context, cross references, and what it reveals.",
+  minutes:"25–40 minutes",
+  what:"Verse mapping takes a single verse and examines it from several angles: the words themselves, the surrounding context, related passages elsewhere in Scripture, and what it reveals about God and about you.",
+  why:"A verse you have read a hundred times can open up when you stop treating it as a sentence and start treating it as a doorway. Mapping keeps a familiar verse from staying flat.",
+  when:"Use it for a verse you have memorised, one you find confusing, or one that keeps returning to you. It is also a good method when you have more time on a weekend.",
+  how:[
+    ["Choose one verse","Resist the urge to map a whole paragraph. One verse is the point."],
+    ["Read the context","Read the paragraph before and after, and note who is speaking, to whom, and why."],
+    ["Mark key words","Pick three or four words that carry the weight of the verse and write what each one means in plain language."],
+    ["Follow cross references","Use your Bible's margin notes or a concordance to find related passages, and note what each adds."],
+    ["Draw it out","Write what the verse reveals about God, what it reveals about you, and what it means for your life."],
+    ["Pray it","Close by praying the verse back in your own words."]
+  ],
+  questions:["Who is speaking, and who is being spoken to?","What comes immediately before and after this verse?","Which words carry the most weight here?","Where else does Scripture speak this way?","What does this reveal about God's character?","What does this ask of me?"],
+  example:{
+    label:"Example study — Psalm 23:1",
+    rows:[
+      ["Verse","Psalm 23:1 (read in your own Bible)."],
+      ["Key words","Shepherd — a keeper who leads, feeds, and protects. Want — lack, in the sense of going without what is needed."],
+      ["Context","A psalm attributed to David, who worked as a shepherd himself before he was king, so the image is drawn from work he knew firsthand."],
+      ["Cross references","Psalm 80:1 and John 10:11 continue the shepherd image; Philippians 4:19 touches on provision."],
+      ["Reveals about God","He takes personal responsibility for those in His care, rather than leaving them to manage alone."],
+      ["Personal meaning","My anxiety usually starts with the fear that I will be left to figure it out by myself. This verse names someone who has already taken that job."]
+    ]
+  },
+  sections:[
+    {t:"The verse", note:"One verse is enough.", fields:[
+      {id:"ref", l:"Verse reference", type:"text", ph:"e.g. Psalm 23:1", title:true},
+      {id:"translation", l:"Translation (optional)", type:"text", ph:"e.g. ESV, NIV, KJV"},
+      {id:"verse", l:"Write the verse out", type:"area", rows:3}
+    ]},
+    {t:"Key words", note:"Three or four words is plenty.", fields:[
+      {id:"keywords", l:"Key words and what they mean", type:"area", rows:4, ph:"Word — what it means in plain language."}
+    ]},
+    {t:"Context", fields:[
+      {id:"context", l:"Who is speaking, to whom, and why?", type:"area", rows:3},
+      {id:"surround", l:"What comes before and after?", type:"area", rows:3}
+    ]},
+    {t:"Cross references", note:"Where else does Scripture speak this way?", fields:[
+      {id:"cross", l:"Related passages and what each adds", type:"area", rows:4, ph:"Reference — what it adds to your understanding."}
+    ]},
+    {t:"Highlights", note:"A personal way to sort what you see. These categories are an organising aid, not an authority.", fields:[
+      {id:"highlights", l:"What does this verse touch on?", type:"chips", options:HIGHLIGHTS},
+      {id:"highlightNotes", l:"Notes on those", type:"area", rows:3}
+    ]},
+    {t:"What it reveals", fields:[
+      {id:"aboutGod", l:"What does this reveal about God?", type:"area", rows:3},
+      {id:"aboutMe", l:"What does this reveal about me?", type:"area", rows:3},
+      {id:"meaning", l:"Personal meaning", type:"area", rows:3}
+    ]},
+    {t:"Application and prayer", note:"Come back to this truth later.", fields:[
+      {id:"apply", l:"Application", type:"area", rows:3},
+      {id:"prayer", l:"Prayer", type:"area", rows:4}
+    ]}
+  ]
+},
+{
+  id:"character", name:"Character Study", icon:I.mChar,
+  blurb:"Follow one person through Scripture and learn from the shape of their life.",
+  minutes:"30–45 minutes",
+  what:"A character study follows one person through the passages where their story appears — their background, their relationships, their decisions, and what their life shows about God.",
+  why:"Scripture tells the truth about people, including the parts they would have left out. Watching how God works with flawed, ordinary people is often where faith becomes believable.",
+  when:"Use it when a name keeps appearing in your reading, when you want a study you can return to over several sittings, or when you are wrestling with something a Bible figure also faced.",
+  how:[
+    ["Gather the references","Use a concordance or your Bible's index to find where the person appears. Write the list before you start reading."],
+    ["Read their story in order","Read the passages in sequence so you can see change over time."],
+    ["Note the plain facts","Background, family, work, and the setting they lived in."],
+    ["Watch the decisions","Note what they chose, what it cost, and what followed."],
+    ["Hold strengths and struggles together","Avoid flattening a person into a hero or a warning."],
+    ["Draw out the lessons","Ask what their story teaches about God first, then what it teaches you."]
+  ],
+  questions:["Where does this person first appear, and where do we last see them?","Who shaped them, and who did they shape?","What did they do under pressure?","Where did God meet them?","What changed in them over time?","What in their story sounds like mine?"],
+  example:{
+    label:"Example study — Ruth",
+    rows:[
+      ["References","The book of Ruth, chapters 1–4; also named in Matthew 1:5."],
+      ["Background","A Moabite woman who married into an Israelite family living in Moab during a famine, and was widowed young."],
+      ["Relationships","Naomi, her mother-in-law, whom she chose to stay with; Boaz, a relative of Naomi's husband."],
+      ["Decisions","She left her own homeland to stay with Naomi rather than return to her family, and worked in the fields to provide for them both."],
+      ["What it teaches about God","The narrative shows provision arriving through ordinary means — harvest, family responsibility, and the kindness of particular people."],
+      ["What I can apply","Loyalty in a season when nothing is guaranteed is still worth choosing, and quiet faithfulness is not wasted."]
+    ]
+  },
+  sections:[
+    {t:"Who I am studying", fields:[
+      {id:"ref", l:"Character name", type:"text", ph:"e.g. Ruth", title:true},
+      {id:"refs", l:"Bible references", type:"area", rows:2, ph:"e.g. Ruth 1–4; Matthew 1:5"},
+      {id:"who", l:"Who is this person?", type:"area", rows:3}
+    ]},
+    {t:"Their life", fields:[
+      {id:"background", l:"Background", type:"area", rows:3},
+      {id:"relationships", l:"Relationships", type:"area", rows:3},
+      {id:"strengths", l:"Strengths", type:"area", rows:3},
+      {id:"weaknesses", l:"Weaknesses and struggles", type:"area", rows:3},
+      {id:"decisions", l:"Decisions they made", type:"area", rows:3}
+    ]},
+    {t:"What I take from it", note:"Hold the whole person, not just the highlights.", fields:[
+      {id:"learn", l:"What can I learn?", type:"area", rows:3},
+      {id:"aboutGod", l:"What does their story teach me about God?", type:"area", rows:3},
+      {id:"apply", l:"What can I apply to my own life?", type:"area", rows:3}
+    ]},
+    {t:"Key lessons", fields:[
+      {id:"lessons", l:"Key lessons", type:"box", rows:4, ph:"The two or three things you want to keep from this life."}
+    ]},
+    {t:"Prayer", fields:[
+      {id:"prayer", l:"Prayer", type:"area", rows:4}
+    ]}
+  ]
+},
+{
+  id:"chapter", name:"Chapter Study", icon:I.mChap,
+  blurb:"Read a full chapter and capture its main idea before moving on.",
+  minutes:"25–35 minutes",
+  what:"A chapter study reads one complete chapter and works out what it is about as a whole — the main idea, the key events, the people, and the repeated themes — before drawing out application.",
+  why:"Single verses are easy to lift out of shape. Reading a whole chapter keeps a verse inside the argument it belongs to, and it is how you begin to see a book's structure rather than a scattering of favourites.",
+  when:"Use it when you want to work through a book steadily, one chapter at a time, or when a verse you love sits inside a chapter you have never actually read.",
+  how:[
+    ["Read it through once","Read the whole chapter without stopping to take notes. Just get the shape of it."],
+    ["Write your first impression","Before analysis, note what struck you on that first pass."],
+    ["Read it again slowly","Now mark key events, people, and repeated words."],
+    ["Name the main idea","Try to say what the chapter is about in one sentence."],
+    ["Write your questions","Note what you did not understand. Unanswered questions are part of honest study."],
+    ["Draw out what it teaches","About God, about people, and about your own life."]
+  ],
+  questions:["What is this chapter mainly about?","What happens, and in what order?","Who is involved?","What words or ideas keep returning?","What does this chapter assume the reader already knows?","What did I not understand?"],
+  example:{
+    label:"Example study — Genesis 1",
+    rows:[
+      ["First impression","The rhythm is striking — the same phrases return at the end of each stage, like a refrain."],
+      ["Main idea","God creates an ordered world by speaking, and calls what He makes good."],
+      ["Repeated words","God said; and it was so; and God saw that it was good; evening and morning."],
+      ["Teaches about God","He is the one who initiates. Order and goodness are described as intentional rather than accidental."],
+      ["Questions I have","How do the days relate to the structure of the chapter as a whole? Worth bringing to a study group."],
+      ["In one sentence","The world begins as God's deliberate, good work rather than an accident."]
+    ]
+  },
+  sections:[
+    {t:"The chapter", fields:[
+      {id:"ref", l:"Bible book and chapter", type:"text", ph:"e.g. Genesis 1", title:true},
+      {id:"date", l:"Date", type:"date"},
+      {id:"first", l:"First impression", type:"area", rows:3, ph:"Before analysis — what struck you on the first read?"}
+    ]},
+    {t:"What is here", fields:[
+      {id:"main", l:"Main idea", type:"area", rows:2},
+      {id:"events", l:"Key events", type:"area", rows:4},
+      {id:"people", l:"Important people", type:"area", rows:2},
+      {id:"repeat", l:"Repeated words and themes", type:"area", rows:3},
+      {id:"questions", l:"Questions I have", type:"area", rows:3, ph:"It is fine to leave a question open."}
+    ]},
+    {t:"What it teaches", fields:[
+      {id:"aboutGod", l:"What does this chapter teach about God?", type:"area", rows:3},
+      {id:"aboutPeople", l:"What does this chapter teach about people?", type:"area", rows:3},
+      {id:"apply", l:"What can I apply?", type:"area", rows:3}
+    ]},
+    {t:"Chapter summary", fields:[
+      {id:"summary", l:"Chapter summary", type:"area", rows:4},
+      {id:"onesentence", l:"In one sentence", type:"box", rows:2, ph:"Say the whole chapter in a single sentence."}
+    ]},
+    {t:"Prayer", fields:[
+      {id:"prayer", l:"Prayer", type:"area", rows:4}
+    ]}
+  ]
+},
+{
+  id:"theme", name:"Theme Study", icon:I.mTheme,
+  blurb:"Trace one idea across several passages and watch the pattern emerge.",
+  minutes:"40+ minutes",
+  what:"A theme study follows one idea — rest, covenant, mercy, waiting — across several passages, recording what each one adds, then looking for the pattern they make together.",
+  why:"Some things Scripture says are built slowly across many books. A theme study lets you see the whole line rather than one point on it.",
+  when:"Use it when the same idea keeps surfacing in your reading, when you are preparing to teach, or when you want a study that stretches across several weeks.",
+  how:[
+    ["Name the theme","Be specific. 'God's provision in scarcity' will serve you better than 'provision'."],
+    ["Say why you are studying it","Your reason will shape the questions you ask, so write it down honestly."],
+    ["Gather passages","Add them one at a time as you find them, rather than trying to list them all at the start."],
+    ["Record what each one adds","For every passage, note what it teaches and the single insight you want to keep."],
+    ["Look for the pattern","Read your own notes and ask what repeats, what develops, and what surprised you."],
+    ["Let it change something","End with what this shifts in how you see God and how you live."]
+  ],
+  questions:["Where does this theme first appear?","Does it develop over time?","Which passages complicate my assumptions?","What does this theme reveal about God's character?","What has my view of this been until now?","What changes if I take this seriously?"],
+  example:{
+    label:"Example study — Rest",
+    rows:[
+      ["Theme","Rest — what it is, and who it is for."],
+      ["Why I am studying this","I am tired in a way sleep is not fixing, and I want to know whether Scripture treats rest as a reward or a gift."],
+      ["Passages","Genesis 2:2–3; Exodus 20:8–11; Psalm 23:2; Matthew 11:28–30; Hebrews 4:9–11."],
+      ["Patterns I notice","Rest appears early, before there is any weariness to recover from, which suggests it is built in rather than earned."],
+      ["What I am learning","Rest seems to be something to enter rather than something to achieve after everything is finished."],
+      ["Application","One evening a week with no task list, and I will stop treating rest as the reward for a finished day."]
+    ]
+  },
+  sections:[
+    {t:"The theme", fields:[
+      {id:"ref", l:"Theme", type:"text", ph:"e.g. Rest", title:true},
+      {id:"why", l:"Why am I studying this theme?", type:"area", rows:3}
+    ]},
+    {t:"What Scripture says", note:"Add a passage each time you find one.", fields:[
+      {id:"passages", l:"Passages", type:"repeater", item:"Passage", sub:[
+        {id:"ref", l:"Reference", type:"text", ph:"e.g. Matthew 11:28–30"},
+        {id:"teach", l:"What does it teach?", type:"area", rows:2},
+        {id:"insight", l:"Key insight", type:"text"}
+      ]}
+    ]},
+    {t:"What I see", fields:[
+      {id:"patterns", l:"Patterns I notice", type:"area", rows:3},
+      {id:"aboutGod", l:"What does this reveal about God?", type:"area", rows:3},
+      {id:"learning", l:"What am I learning?", type:"area", rows:3},
+      {id:"perspective", l:"How does this change my perspective?", type:"area", rows:3}
+    ]},
+    {t:"Application and prayer", fields:[
+      {id:"apply", l:"Application", type:"area", rows:3},
+      {id:"prayer", l:"Prayer", type:"area", rows:4}
+    ]}
+  ]
+},
+{
+  id:"topical", name:"Topical Study", icon:I.mTopic,
+  blurb:"Ask what Scripture says about a subject you are facing right now.",
+  minutes:"30–45 minutes",
+  what:"A topical study starts with a subject — anxiety, money, friendship, forgiveness — and gathers what Scripture says about it, sorting what you find into principles, commands, promises, warnings, and examples.",
+  why:"When life raises a question, it helps to know where Scripture speaks to it rather than reaching for the one verse you already remember. Sorting what you find also keeps a promise from being read as a command, or the reverse.",
+  when:"Use it when you are facing a decision, walking through something hard, or preparing to talk with someone about a subject you want to handle carefully.",
+  how:[
+    ["Write the topic and your reason","Naming why you are studying it keeps you honest about what you are hoping to find."],
+    ["Gather passages","Use a concordance, your Bible's cross references, or a topical index."],
+    ["Read each in context","Check what surrounds a verse before you add it to your list."],
+    ["Sort what you find","Separate principles, commands, promises, warnings, and examples. They are not the same thing."],
+    ["Write the takeaways","Two or three sentences you could say from memory."],
+    ["Make it personal","End with what you will do, and a prayer."]
+  ],
+  questions:["What does Scripture actually say about this?","Am I reading a promise as a command, or a command as a promise?","Which passages am I avoiding because they are uncomfortable?","What principle sits underneath the specific instructions?","Where do I see this lived out in Scripture?","What is my next step?"],
+  example:{
+    label:"Example study — Anxiety",
+    rows:[
+      ["Topic","Anxiety."],
+      ["Why I am studying this","I want to understand it as something Scripture addresses rather than something to be ashamed of."],
+      ["Passages","Philippians 4:6–7; 1 Peter 5:7; Matthew 6:25–34; Psalm 55:22."],
+      ["Commands","Several passages instruct the reader to bring anxiety to God rather than carry it alone."],
+      ["Promises","Peace and care are described as God's response, though not always as the removal of the circumstance."],
+      ["Personal application","When anxiety arrives, my first move will be to write it down as a prayer instead of researching it for an hour."]
+    ]
+  },
+  sections:[
+    {t:"The topic", fields:[
+      {id:"ref", l:"Topic", type:"text", ph:"e.g. Anxiety", title:true},
+      {id:"why", l:"Why am I studying this topic?", type:"area", rows:3}
+    ]},
+    {t:"Bible passages", note:"Add references as you find them.", fields:[
+      {id:"passages", l:"Passages", type:"repeater", item:"Passage", sub:[
+        {id:"ref", l:"Reference", type:"text", ph:"e.g. 1 Peter 5:7"},
+        {id:"note", l:"What does it say?", type:"area", rows:2}
+      ]}
+    ]},
+    {t:"Questions", note:"Sort what you find. These are not the same kind of statement.", fields:[
+      {id:"says", l:"What does Scripture say about this?", type:"area", rows:3},
+      {id:"principles", l:"What principles do I notice?", type:"area", rows:3},
+      {id:"commands", l:"Are there commands?", type:"area", rows:2},
+      {id:"promises", l:"Are there promises?", type:"area", rows:2},
+      {id:"warnings", l:"Are there warnings?", type:"area", rows:2},
+      {id:"examples", l:"Are there examples?", type:"area", rows:2}
+    ]},
+    {t:"Takeaways", fields:[
+      {id:"takeaways", l:"Key takeaways", type:"box", rows:3},
+      {id:"apply", l:"Personal application", type:"area", rows:3},
+      {id:"prayer", l:"Prayer", type:"area", rows:4}
+    ]}
+  ]
+}
+];
+const METHOD = Object.fromEntries(METHODS.map(m => [m.id, m]));
+
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+const KEY = "scriptureStudyStudio.v1";
+
+function blankState(){
+  return {
+    version:1,
+    onboarded:false,
+    settings:{ theme:"light", fontSize:16, printNotes:true },
+    studies:[],
+    prayers:[],
+    reflections:[],
+    sermons:[],
+    gratitude:{},            // { "1": {date, grateful, why, goodness, done} }
+    journal:[],
+    reading:{},              // { "Genesis": "reading" | "done" }
+    favPrompts:[],
+    favPassages:[],
+    activity:[],             // ISO dates with any saved activity
+    lastStudyId:null
+  };
+}
+
+let S = blankState();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw){
+      const parsed = JSON.parse(raw);
+      S = Object.assign(blankState(), parsed);
+      S.settings = Object.assign(blankState().settings, parsed.settings || {});
+      return true;
+    }
+  }catch(e){ console.warn("Could not read saved data.", e); }
+  return false;
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ toast("Storage is full — export your data to be safe."); }
+}
+function markActivity(){
+  const t = todayISO();
+  if(!S.activity.includes(t)) S.activity.push(t);
+}
+function streak(){
+  if(!S.activity.length) return 0;
+  const set = new Set(S.activity);
+  let n = 0;
+  const d = new Date();
+  if(!set.has(d.toISOString().slice(0,10))) d.setDate(d.getDate() - 1);
+  while(set.has(d.toISOString().slice(0,10))){ n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+
+/* ---------- sample content ---------- */
+function seedSamples(){
+  const t = todayISO();
+  S.studies.push({
+    id:uid(), method:"soap", sample:true, favorite:false,
+    created:t, edited:t,
+    data:{
+      ref:"Philippians 4:6–7", translation:"", 
+      passage:"Paul writes about anxiety, prayer, and the peace that follows.",
+      stands:"The instruction is not to stop worrying, but to replace worry with prayer.",
+      happening:"Paul is closing a letter to a church he loves, and turns to how they should handle worry.",
+      repeat:"Prayer, thanksgiving, peace.",
+      aboutGod:"He invites the worry rather than waiting for me to sort it out first.",
+      teach:"Anxiety is met with a redirection, not a rebuke.",
+      apply:"When a worry loops, write it as a prayer instead of turning it over again.",
+      action:"Keep a notepad by the bed this week.",
+      prayer:"Lord, I hand You the thing I keep carrying. Thank You for what You have already carried me through."
+    }
+  });
+  S.studies.push({
+    id:uid(), method:"verse", sample:true, favorite:true,
+    created:t, edited:t,
+    data:{
+      ref:"Psalm 23:1", verse:"A psalm of David that opens with the image of God as shepherd.",
+      keywords:"Shepherd — one who leads, feeds and protects.\nWant — to lack what is needed.",
+      context:"Attributed to David, who had worked as a shepherd before he was king.",
+      cross:"Psalm 80:1 — the shepherd image applied to a whole people.\nJohn 10:11 — the image picked up again.",
+      highlights:["God","Promises"],
+      highlightNotes:"Mostly about who God is rather than what I should do.",
+      aboutGod:"He takes personal responsibility for those in His care.",
+      aboutMe:"My anxiety usually begins with the fear of being left to manage alone.",
+      meaning:"Someone has already taken the job I keep trying to do.",
+      apply:"Name one thing this week I am trying to carry that is not mine to carry.",
+      prayer:"Thank You for going ahead of me."
+    }
+  });
+  S.journal.push({
+    id:uid(), sample:true, favorite:false, title:"A quiet morning", date:t,
+    cat:"Devotional reflection",
+    body:"Got up before the house did. Read slowly for once instead of skimming, and the same phrase kept coming back to me all morning while I made breakfast. Want to remember that it was the slowness that did it, not the length."
+  });
+  S.prayers.push({
+    id:uid(), sample:true, favorite:false, date:t, cat:"Thanksgiving",
+    body:"Thank You for a week that was ordinary. Nothing happened, and that was a mercy."
+  });
+  S.sermons.push({
+    id:uid(), sample:true, favorite:false, date:t,
+    speaker:"Sample entry", title:"Rest is not a reward", passage:"Hebrews 4:9–11",
+    point:"Rest is something to enter rather than something to earn.",
+    scriptures:"Genesis 2:2–3; Matthew 11:28–30; Hebrews 4:9–11",
+    notes:"Traced rest from creation forward — it appears before there is any weariness to recover from.",
+    stood:"That rest was built in before anyone was tired.",
+    learned:"I have been treating rest as the reward at the end of a finished list.",
+    apply:"One evening this week with no task list.",
+    prayer:"Teach me to stop earning what You have already given.",
+    truth:"Rest is entered, not achieved."
+  });
+  S.lastStudyId = S.studies[0].id;
+  markActivity();
+  save();
+}
+
+/* ============================================================
+   CHROME — nav, toast, modal
+   ============================================================ */
+const NAV = [
+  {id:"home",      label:"Home",               icon:I.home,   mobile:true},
+  {id:"methods",   label:"Study methods",      icon:I.book,   mobile:true},
+  {id:"studies",   label:"My studies",         icon:I.folder, mobile:true},
+  {id:"reading",   label:"Reading tracker",    icon:I.check,  mobile:true},
+  {id:"prayer",    label:"Prayer & reflection",icon:I.hands},
+  {id:"sermons",   label:"Sermon notes",       icon:I.mic},
+  {id:"gratitude", label:"Gratitude",          icon:I.leaf},
+  {id:"journal",   label:"Journal",            icon:I.pen},
+  {id:"favorites", label:"Favorites",          icon:I.heart},
+  {id:"settings",  label:"Settings",           icon:I.gear}
+];
+
+let route = {view:"home", param:null, sub:null};
+
+function buildNav(){
+  const side = $("#sideNav");
+  side.innerHTML = "";
+  NAV.forEach(n => {
+    const b = el("button", {type:"button", "data-nav":n.id}, n.icon + "<span>" + n.label + "</span>");
+    b.addEventListener("click", () => go(n.id));
+    side.appendChild(b);
+  });
+
+  const mob = $("#mobileNav");
+  mob.innerHTML = "";
+  NAV.filter(n => n.mobile).forEach(n => {
+    const short = {home:"Home", methods:"Methods", studies:"Studies", reading:"Reading"}[n.id];
+    const b = el("button", {type:"button", "data-nav":n.id}, n.icon + "<span>" + short + "</span>");
+    b.addEventListener("click", () => { closeSheet(); go(n.id); });
+    mob.appendChild(b);
+  });
+  const more = el("button", {type:"button", "data-more":"1"}, I.dots + "<span>More</span>");
+  more.addEventListener("click", toggleSheet);
+  mob.appendChild(more);
+
+  const sheetNav = $("#sheetNav");
+  sheetNav.innerHTML = "";
+  NAV.filter(n => !n.mobile).forEach(n => {
+    const b = el("button", {type:"button", "data-nav":n.id}, n.icon + "<span>" + n.label + "</span>");
+    b.addEventListener("click", () => { closeSheet(); go(n.id); });
+    sheetNav.appendChild(b);
+  });
+}
+function syncNav(){
+  $$("[data-nav]").forEach(b => {
+    if(b.dataset.nav === route.view) b.setAttribute("aria-current","page");
+    else b.removeAttribute("aria-current");
+  });
+}
+function toggleSheet(){ $("#sheet").classList.toggle("on"); }
+function closeSheet(){ $("#sheet").classList.remove("on"); }
+
+let toastTimer;
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("on"), 2200);
+}
+
+let modalPrev = null;
+function openModal(html){
+  modalPrev = document.activeElement;
+  $("#modal").innerHTML = html;
+  $("#scrim").classList.add("on");
+  const f = $("#modal").querySelector("button, input, textarea, select, a[href]");
+  if(f) f.focus();
+}
+function closeModal(){
+  $("#scrim").classList.remove("on");
+  $("#modal").innerHTML = "";
+  if(modalPrev && modalPrev.focus) modalPrev.focus();
+}
+function confirmModal({title, body, confirmLabel = "Confirm", danger = false, onConfirm}){
+  openModal(
+    '<h2 id="modalTitle">' + esc(title) + '</h2><p>' + body + '</p>' +
+    '<div class="btn-row">' +
+    '<button class="btn ghost" data-x="cancel">Cancel</button>' +
+    '<button class="btn' + (danger ? " danger" : "") + '" data-x="ok">' + esc(confirmLabel) + '</button>' +
+    '</div>'
+  );
+  $('[data-x="cancel"]').addEventListener("click", closeModal);
+  $('[data-x="ok"]').addEventListener("click", () => { closeModal(); onConfirm(); });
+}
+$("#scrim").addEventListener("mousedown", e => { if(e.target.id === "scrim") closeModal(); });
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){
+    if($("#scrim").classList.contains("on")) closeModal();
+    else closeSheet();
+  }
+});
+
+/* ---------- router ---------- */
+function go(view, param = null, sub = null){
+  flushDraft();
+  route = {view, param, sub};
+  render();
+  window.scrollTo({top:0, behavior:"instant"});
+  const v = $("#view");
+  v.focus({preventScroll:true});
+  syncNav();
+}
+
+function render(){
+  const v = $("#view");
+  v.innerHTML = "";
+  const fn = VIEWS[route.view];
+  if(fn) fn(v);
+  else VIEWS.home(v);
+}
+
+/* ============================================================
+   WORKSHEET ENGINE — drives all six methods
+   ============================================================ */
+let draft = null;          // {id, method, data}
+let draftTimer = null;
+let draftDirty = false;
+
+function studyTitle(st){
+  const m = METHOD[st.method];
+  const titleField = (m.sections.flatMap(s => s.fields).find(f => f.title) || {}).id;
+  const t = (st.data[titleField] || "").trim();
+  return t || ("Untitled " + m.name.toLowerCase());
+}
+function studyExcerpt(st){
+  const vals = Object.values(st.data).filter(v => typeof v === "string" && v.trim().length > 12);
+  return vals.length ? vals[vals.length - 1] : "";
+}
+function studyFilled(st){
+  const m = METHOD[st.method];
+  const all = m.sections.flatMap(s => s.fields);
+  let done = 0;
+  all.forEach(f => {
+    const v = st.data[f.id];
+    if(Array.isArray(v) ? v.length : (v || "").toString().trim()) done++;
+  });
+  return Math.round((done / all.length) * 100);
+}
+
+function fieldHTML(f, data, prefix = ""){
+  const name = prefix + f.id;
+  const val = data[f.id];
+  const id = "f_" + name.replace(/[^\w]/g, "_");
+  if(f.type === "chips"){
+    const sel = Array.isArray(val) ? val : [];
+    return '<div class="field"><span class="lbl" id="' + id + '_l">' + esc(f.l) + '</span>' +
+      '<div class="chip-row" role="group" aria-labelledby="' + id + '_l" data-chips="' + esc(name) + '">' +
+      f.options.map(o =>
+        '<button type="button" class="chip" aria-pressed="' + (sel.includes(o) ? "true" : "false") + '" data-chip="' + esc(o) + '">' + esc(o) + '</button>'
+      ).join("") + '</div></div>';
+  }
+  if(f.type === "date"){
+    return '<label class="field" for="' + id + '"><span class="lbl">' + esc(f.l) + '</span>' +
+      '<input type="date" id="' + id + '" data-f="' + esc(name) + '" value="' + esc(val || "") + '"></label>';
+  }
+  if(f.type === "text"){
+    return '<label class="field" for="' + id + '"><span class="lbl">' + esc(f.l) + '</span>' +
+      '<input type="text" id="' + id + '" data-f="' + esc(name) + '" value="' + esc(val || "") + '" placeholder="' + esc(f.ph || "") + '"></label>';
+  }
+  if(f.type === "box"){
+    return '<div class="field"><div class="onesentence">' +
+      '<label class="lbl" for="' + id + '">' + esc(f.l) + '</label>' +
+      '<textarea id="' + id + '" data-f="' + esc(name) + '" rows="' + (f.rows || 3) + '" placeholder="' + esc(f.ph || "") + '">' + esc(val || "") + '</textarea>' +
+      '</div></div>';
+  }
+  // area
+  return '<label class="field" for="' + id + '"><span class="lbl">' + esc(f.l) + '</span>' +
+    '<textarea id="' + id + '" data-f="' + esc(name) + '" rows="' + (f.rows || 3) + '" placeholder="' + esc(f.ph || "") + '">' + esc(val || "") + '</textarea></label>';
+}
+
+function repeaterHTML(f, data){
+  const rows = Array.isArray(data[f.id]) ? data[f.id] : [];
+  const items = rows.map((row, i) =>
+    '<div class="repeater-item" data-rep-item="' + i + '">' +
+      '<button type="button" class="btn quiet sm rm" data-rep-remove="' + i + '">Remove</button>' +
+      '<div style="font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:10px;">' + esc(f.item) + " " + (i + 1) + '</div>' +
+      f.sub.map(sf => fieldHTML(sf, row, f.id + "." + i + ".")).join("") +
+    '</div>'
+  ).join("");
+  return '<div class="field" data-rep="' + esc(f.id) + '"><span class="lbl">' + esc(f.l) + '</span>' +
+    '<div data-rep-list>' + (items || '<p style="color:var(--muted);font-size:.88rem;">No passages added yet.</p>') + '</div>' +
+    '<button type="button" class="btn ghost sm" data-rep-add="' + esc(f.id) + '">Add ' + esc(f.item.toLowerCase()) + '</button></div>';
+}
+
+function setDraftValue(path, value){
+  const parts = path.split(".");
+  if(parts.length === 1){ draft.data[parts[0]] = value; }
+  else {
+    const [k, i, sub] = parts;
+    if(!Array.isArray(draft.data[k])) draft.data[k] = [];
+    if(!draft.data[k][i]) draft.data[k][i] = {};
+    draft.data[k][i][sub] = value;
+  }
+  queueDraft();
+}
+function queueDraft(){
+  draftDirty = true;
+  clearTimeout(draftTimer);
+  const note = $("#autosaveNote");
+  if(note) note.textContent = "Saving…";
+  draftTimer = setTimeout(() => { flushDraft(true); }, 900);
+}
+function flushDraft(quiet){
+  clearTimeout(draftTimer);
+  if(!draft || !draftDirty) return;
+  const existing = S.studies.find(s => s.id === draft.id);
+  const now = todayISO();
+  if(existing){
+    existing.data = draft.data;
+    existing.edited = now;
+  } else {
+    S.studies.unshift({
+      id:draft.id, method:draft.method, data:draft.data,
+      created:now, edited:now, favorite:false, sample:false
+    });
+  }
+  S.lastStudyId = draft.id;
+  markActivity();
+  save();
+  draftDirty = false;
+  const note = $("#autosaveNote");
+  if(note) note.textContent = "Draft saved";
+  updateWsProgress();
+}
+function updateWsProgress(){
+  if(!draft) return;
+  const bar = $("#wsFill"), lab = $("#wsPct");
+  if(!bar) return;
+  const pct = studyFilled({method:draft.method, data:draft.data});
+  bar.style.width = pct + "%";
+  lab.textContent = pct + "% complete";
+}
+
+function renderWorksheet(v, methodId, studyId){
+  const m = METHOD[methodId];
+  if(!m){ go("methods"); return; }
+  let st = studyId ? S.studies.find(s => s.id === studyId) : null;
+  draft = {
+    id: st ? st.id : uid(),
+    method: methodId,
+    data: st ? JSON.parse(JSON.stringify(st.data)) : {}
+  };
+  if(!st){
+    const dateField = m.sections.flatMap(s => s.fields).find(f => f.type === "date");
+    if(dateField) draft.data[dateField.id] = todayISO();
+  }
+  draftDirty = !st;
+
+  const back = el("button", {class:"btn quiet sm no-print", style:"margin-bottom:16px;"}, I.back + " Back");
+  back.addEventListener("click", () => { flushDraft(); go(studyId ? "studies" : "methods"); });
+  v.appendChild(back);
+
+  const wrap = el("div", {class:"paper"});
+  wrap.innerHTML =
+    '<div class="paper-head">' +
+      '<div><h2>' + esc(m.name) + '</h2>' +
+      '<div class="sub">' + (st ? "Started " + fmtDate(st.created) : "New study — " + fmtDate(todayISO())) + " · " + esc(m.minutes) + '</div></div>' +
+      '<div class="no-print"><button type="button" class="btn ghost sm" data-x="guide">Read the guide</button></div>' +
+    '</div>' +
+    '<div class="progress-rail no-print"><span id="wsPct">0% complete</span><span class="track"><span class="fill" id="wsFill" style="width:0%"></span></span></div>' +
+    m.sections.map((sec, i) =>
+      '<details class="ws-section" ' + (i < 2 ? "open" : "") + '>' +
+        '<summary><span class="step">' + (i + 1) + '</span><span>' + esc(sec.t) + '</span>' + I.caret + '</summary>' +
+        '<div class="body">' +
+          (sec.note ? '<p style="font-family:var(--display);font-style:italic;font-size:1.05rem;color:var(--sage);margin-bottom:14px;">' + esc(sec.note) + '</p>' : "") +
+          sec.fields.map(f => f.type === "repeater" ? repeaterHTML(f, draft.data) : fieldHTML(f, draft.data)).join("") +
+        '</div>' +
+      '</details>'
+    ).join("") +
+    '<div class="print-foot">Scripture Study Studio · Belalumi Studio</div>';
+  v.appendChild(wrap);
+
+  const actions = el("div", {class:"ws-actions no-print"});
+  actions.innerHTML =
+    '<button type="button" class="btn" data-x="save">Save study</button>' +
+    '<button type="button" class="btn ghost" data-x="print">Print or save as PDF</button>' +
+    '<button type="button" class="btn quiet" data-x="clear">Clear this worksheet</button>' +
+    '<span class="autosave" id="autosaveNote">' + (st ? "Draft saved" : "Autosaving as you write") + '</span>';
+  v.appendChild(actions);
+
+  // wiring
+  wrap.addEventListener("input", e => {
+    const f = e.target.dataset.f;
+    if(f) setDraftValue(f, e.target.value);
+  });
+  wrap.addEventListener("click", e => {
+    const chip = e.target.closest("[data-chip]");
+    if(chip){
+      const group = chip.closest("[data-chips]").dataset.chips;
+      const on = chip.getAttribute("aria-pressed") === "true";
+      chip.setAttribute("aria-pressed", on ? "false" : "true");
+      const cur = Array.isArray(draft.data[group]) ? draft.data[group].slice() : [];
+      const val = chip.dataset.chip;
+      setDraftValue(group, on ? cur.filter(x => x !== val) : cur.concat([val]));
+      return;
+    }
+    const add = e.target.closest("[data-rep-add]");
+    if(add){
+      const key = add.dataset.repAdd;
+      if(!Array.isArray(draft.data[key])) draft.data[key] = [];
+      draft.data[key].push({});
+      queueDraft(); flushDraft();
+      go("worksheet", methodId, draft.id);
+      return;
+    }
+    const rm = e.target.closest("[data-rep-remove]");
+    if(rm){
+      const key = rm.closest("[data-rep]").dataset.rep;
+      draft.data[key].splice(Number(rm.dataset.repRemove), 1);
+      queueDraft(); flushDraft();
+      go("worksheet", methodId, draft.id);
+      return;
+    }
+    if(e.target.closest('[data-x="guide"]')){ flushDraft(); go("method", methodId); }
+  });
+
+  actions.addEventListener("click", e => {
+    const x = e.target.dataset.x;
+    if(x === "save"){
+      draftDirty = true; flushDraft();
+      toast("Study saved");
+      setTimeout(() => go("studies"), 500);
+    }
+    if(x === "print"){ flushDraft(); window.print(); }
+    if(x === "clear"){
+      confirmModal({
+        title:"Clear this worksheet?",
+        body:"Everything you have written on this page will be removed. Your other studies are not affected.",
+        confirmLabel:"Clear worksheet", danger:true,
+        onConfirm:() => {
+          draft.data = {};
+          draftDirty = true; flushDraft();
+          go("worksheet", methodId, draft.id);
+          toast("Worksheet cleared");
+        }
+      });
+    }
+  });
+
+  updateWsProgress();
+}
+
+/* ============================================================
+   VIEWS
+   ============================================================ */
+function head(title, lede, eyebrow){
+  return '<div class="page-head">' +
+    (eyebrow ? '<div class="eyebrow">' + esc(eyebrow) + '</div>' : "") +
+    '<h1>' + esc(title) + '</h1>' +
+    (lede ? '<p class="lede">' + esc(lede) + '</p>' : "") +
+    '</div>';
+}
+function emptyState(title, line, btnLabel, onClick){
+  const d = el("div", {class:"empty"},
+    I.sprigSm + '<h3>' + esc(title) + '</h3><p>' + esc(line) + '</p>' +
+    (btnLabel ? '<button type="button" class="btn">' + esc(btnLabel) + '</button>' : ""));
+  if(btnLabel) d.querySelector("button").addEventListener("click", onClick);
+  return d;
+}
+function promptOfDay(){
+  const seed = Math.floor(Date.now() / 86400000);
+  return PROMPTS[seed % PROMPTS.length];
+}
+function favBtn(on){
+  return '<button type="button" class="fav" aria-pressed="' + (on ? "true" : "false") + '" aria-label="' + (on ? "Remove from favorites" : "Add to favorites") + '">' +
+    (on ? I.heartFill : I.heartLine) + '</button>';
+}
+
+const VIEWS = {};
+
+/* ---------------- HOME ---------------- */
+VIEWS.home = v => {
+  const last = S.studies.find(s => s.id === S.lastStudyId) || S.studies[0];
+  const done = S.studies.filter(s => studyFilled(s) >= 70).length;
+  const counts = {};
+  S.studies.forEach(s => counts[s.method] = (counts[s.method] || 0) + 1);
+  const favMethod = Object.keys(counts).sort((a,b) => counts[b] - counts[a])[0];
+
+  const hero = el("div", {class:"hero"},
+    '<div class="corner">' + I.corner + '</div>' +
+    '<h1>Grow deeper in the Word.</h1>' +
+    '<p class="lede">Study Scripture with intention, reflect with purpose, and make space for God\u2019s Word in your everyday life.</p>');
+  v.appendChild(hero);
+
+  // Today's study
+  const t = el("div", {class:"section-title"}, "<h2>Today\u2019s study</h2>");
+  v.appendChild(t);
+  const cont = el("div", {class:"card continue"});
+  if(last){
+    cont.innerHTML =
+      '<div class="meta">' +
+        '<div><div class="k">Last studied</div><div class="v">' + esc(studyTitle(last)) + '</div></div>' +
+        '<div><div class="k">Method</div><div class="v">' + esc(METHOD[last.method].name) + '</div></div>' +
+        '<div><div class="k">Date</div><div class="v">' + fmtDate(last.edited) + '</div></div>' +
+        '<div><div class="k">Progress</div><div class="v">' + studyFilled(last) + '%</div></div>' +
+      '</div><button type="button" class="btn">Continue study</button>';
+    cont.querySelector("button").addEventListener("click", () => go("worksheet", last.method, last.id));
+  } else {
+    cont.innerHTML = '<div class="meta"><div><div class="k">Nothing in progress</div>' +
+      '<div class="v">Your first study can start with just one verse.</div></div></div>' +
+      '<button type="button" class="btn">Start a study</button>';
+    cont.querySelector("button").addEventListener("click", () => go("methods"));
+  }
+  v.appendChild(cont);
+
+  // Quick start
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Quick start</h2>"));
+  const grid = el("div", {class:"grid c3"});
+  METHODS.forEach(m => {
+    const c = el("div", {class:"method-card"},
+      '<span class="ico">' + m.icon + '</span>' +
+      '<h3>' + esc(m.name) + '</h3>' +
+      '<p>' + esc(m.blurb) + '</p>' +
+      '<div class="btn-row"><button type="button" class="btn sm" data-a="start">Start study</button>' +
+      '<button type="button" class="btn ghost sm" data-a="learn">How it works</button></div>');
+    c.querySelector('[data-a="start"]').addEventListener("click", () => go("worksheet", m.id));
+    c.querySelector('[data-a="learn"]').addEventListener("click", () => go("method", m.id));
+    grid.appendChild(c);
+  });
+  v.appendChild(grid);
+
+  // Progress
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Your progress</h2>"));
+  const stats = el("div", {class:"grid c4"});
+  [
+    [done, "Studies completed"],
+    [streak(), streak() === 1 ? "Day streak" : "Day streak"],
+    [S.activity.length, "Days studied"],
+    [favMethod ? METHOD[favMethod].name.replace(" Study","") : "—", "Favourite method"]
+  ].forEach(([n, l]) => {
+    stats.appendChild(el("div", {class:"stat"}, '<div class="n">' + esc(n) + '</div><div class="l">' + esc(l) + '</div>'));
+  });
+  v.appendChild(stats);
+
+  // Reflection prompt
+  const p = el("div", {class:"prompt-card", style:"margin-top:34px;"},
+    I.sprigSm + '<div class="q">' + esc(promptOfDay()) + '</div>' +
+    '<div class="btn-row" style="justify-content:center;">' +
+    '<button type="button" class="btn ghost sm" data-a="write">Write about this</button>' +
+    '<button type="button" class="btn quiet sm" data-a="new">Another prompt</button></div>');
+  p.querySelector('[data-a="write"]').addEventListener("click", () => go("journal", null, promptOfDay()));
+  p.querySelector('[data-a="new"]').addEventListener("click", () => {
+    p.querySelector(".q").textContent = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+  });
+  v.appendChild(p);
+};
+
+/* ---------------- STUDY METHODS LIBRARY ---------------- */
+VIEWS.methods = v => {
+  v.innerHTML = head("Study methods", "Six ways to open your Bible. Read how each one works, then use the guided worksheet that comes with it.", "Learn the how before the what");
+  const grid = el("div", {class:"grid c2"});
+  METHODS.forEach(m => {
+    const c = el("div", {class:"method-card"},
+      '<span class="ico">' + m.icon + '</span>' +
+      '<h3>' + esc(m.name) + '</h3>' +
+      '<p>' + esc(m.blurb) + '</p>' +
+      '<div style="font-size:.76rem;color:var(--taupe);">Usually ' + esc(m.minutes) + '</div>' +
+      '<div class="btn-row"><button type="button" class="btn sm" data-a="start">Start study</button>' +
+      '<button type="button" class="btn ghost sm" data-a="learn">Read the guide</button></div>');
+    c.querySelector('[data-a="start"]').addEventListener("click", () => go("worksheet", m.id));
+    c.querySelector('[data-a="learn"]').addEventListener("click", () => go("method", m.id));
+    grid.appendChild(c);
+  });
+  v.appendChild(grid);
+};
+
+/* ---------------- ONE METHOD — teaching page ---------------- */
+VIEWS.method = v => {
+  const m = METHOD[route.param];
+  if(!m){ go("methods"); return; }
+  const back = el("button", {class:"btn quiet sm no-print", style:"margin-bottom:16px;"}, I.back + " All methods");
+  back.addEventListener("click", () => go("methods"));
+  v.appendChild(back);
+
+  const wrap = el("div", {class:"paper teach"});
+  wrap.innerHTML =
+    '<div class="paper-head"><div><h2>' + esc(m.name) + '</h2>' +
+    '<div class="sub">Usually ' + esc(m.minutes) + '</div></div></div>' +
+
+    '<h3>What is it?</h3><p>' + esc(m.what) + '</p>' +
+    '<h3>Why use this method?</h3><p>' + esc(m.why) + '</p>' +
+    '<h3>When to use it</h3><p>' + esc(m.when) + '</p>' +
+
+    '<h3>How it works</h3><ol>' +
+      m.how.map(([h, p]) => '<li><strong>' + esc(h) + '.</strong> ' + esc(p) + '</li>').join("") +
+    '</ol>' +
+
+    '<h3>Helpful questions</h3><ul class="qlist">' +
+      m.questions.map(q => '<li>' + esc(q) + '</li>').join("") +
+    '</ul>' +
+
+    '<h3>Example</h3>' +
+    '<div class="example"><div class="ex-head">' + esc(m.example.label) + ' — a worked example, not a substitute for reading the passage yourself</div>' +
+      '<div class="ex-body">' +
+        m.example.rows.map(([k, val]) => '<div class="x-k">' + esc(k) + '</div><div class="x-v">' + esc(val) + '</div>').join("") +
+      '</div></div>' +
+    '<p style="font-size:.84rem;color:var(--muted);margin-top:14px;">Scripture references above point you to the passage — read it in your own Bible in the translation you prefer.</p>';
+  v.appendChild(wrap);
+
+  const row = el("div", {class:"btn-row no-print", style:"margin-top:22px;"},
+    '<button type="button" class="btn">Start a ' + esc(m.name.toLowerCase()) + '</button>' +
+    '<button type="button" class="btn ghost">Print this guide</button>');
+  row.children[0].addEventListener("click", () => go("worksheet", m.id));
+  row.children[1].addEventListener("click", () => window.print());
+  v.appendChild(row);
+};
+
+VIEWS.worksheet = v => renderWorksheet(v, route.param, route.sub);
+
+/* ---------------- MY STUDIES ---------------- */
+let studyFilters = {q:"", method:"", sort:"new", favOnly:false};
+
+VIEWS.studies = v => {
+  v.innerHTML = head("My studies", "Everything you have written, kept on this device.", "Your library");
+
+  const bar = el("div", {class:"toolbar"});
+  bar.innerHTML =
+    '<div class="search">' + I.search + '<input type="search" id="sq" placeholder="Search by title, reference or words you wrote" value="' + esc(studyFilters.q) + '"></div>' +
+    '<select id="sm"><option value="">All methods</option>' +
+      METHODS.map(m => '<option value="' + m.id + '"' + (studyFilters.method === m.id ? " selected" : "") + '>' + esc(m.name) + '</option>').join("") +
+    '</select>' +
+    '<select id="ss"><option value="new"' + (studyFilters.sort === "new" ? " selected" : "") + '>Newest first</option>' +
+      '<option value="old"' + (studyFilters.sort === "old" ? " selected" : "") + '>Oldest first</option>' +
+      '<option value="az"' + (studyFilters.sort === "az" ? " selected" : "") + '>Title A–Z</option></select>' +
+    '<button type="button" class="chip" id="sf" aria-pressed="' + studyFilters.favOnly + '">Favourites</button>' +
+    '<button type="button" class="btn sm" id="snew">Start a new study</button>';
+  v.appendChild(bar);
+
+  $("#sq", bar).addEventListener("input", e => { studyFilters.q = e.target.value; paint(); });
+  $("#sm", bar).addEventListener("change", e => { studyFilters.method = e.target.value; paint(); });
+  $("#ss", bar).addEventListener("change", e => { studyFilters.sort = e.target.value; paint(); });
+  $("#sf", bar).addEventListener("click", e => {
+    studyFilters.favOnly = !studyFilters.favOnly;
+    e.currentTarget.setAttribute("aria-pressed", studyFilters.favOnly);
+    paint();
+  });
+  $("#snew", bar).addEventListener("click", () => go("methods"));
+
+  const list = el("div", {class:"grid", style:"gap:12px;"});
+  v.appendChild(list);
+
+  function paint(){
+    let rows = S.studies.slice();
+    if(studyFilters.method) rows = rows.filter(s => s.method === studyFilters.method);
+    if(studyFilters.favOnly) rows = rows.filter(s => s.favorite);
+    const q = studyFilters.q.trim().toLowerCase();
+    if(q){
+      rows = rows.filter(s =>
+        (studyTitle(s) + " " + METHOD[s.method].name + " " + JSON.stringify(s.data)).toLowerCase().includes(q));
+    }
+    if(studyFilters.sort === "az") rows.sort((a,b) => studyTitle(a).localeCompare(studyTitle(b)));
+    else if(studyFilters.sort === "old") rows.reverse();
+
+    list.innerHTML = "";
+    if(!rows.length){
+      list.appendChild(S.studies.length
+        ? emptyState("Nothing matches that.", "Try a different word, or clear the filters to see everything.", "Show all studies", () => { studyFilters = {q:"", method:"", sort:"new", favOnly:false}; go("studies"); })
+        : emptyState("No studies yet.", "Your first study can start with just one verse.", "Start a study", () => go("methods")));
+      return;
+    }
+    rows.forEach(s => {
+      const m = METHOD[s.method];
+      const card = el("div", {class:"row-card"});
+      card.innerHTML =
+        '<div class="rc-main">' +
+          '<h3>' + esc(studyTitle(s)) + '</h3>' +
+          '<div class="rc-excerpt">' + esc(studyExcerpt(s)) + '</div>' +
+          '<div class="rc-meta"><span class="pill">' + esc(m.name) + '</span>' +
+            (s.sample ? '<span class="pill sample">Sample study</span>' : "") +
+            '<span>Created ' + fmtDate(s.created) + '</span><span>Edited ' + fmtDate(s.edited) + '</span>' +
+            '<span>' + studyFilled(s) + '% complete</span></div>' +
+        '</div>' +
+        '<div class="rc-actions">' + favBtn(s.favorite) +
+          '<button type="button" class="btn ghost sm" data-a="edit">Open</button>' +
+          '<button type="button" class="btn quiet sm" data-a="dup">Duplicate</button>' +
+          '<button type="button" class="btn quiet sm" data-a="del">Delete</button></div>';
+      card.querySelector(".fav").addEventListener("click", () => {
+        s.favorite = !s.favorite; save(); paint();
+      });
+      card.querySelector('[data-a="edit"]').addEventListener("click", () => go("worksheet", s.method, s.id));
+      card.querySelector('[data-a="dup"]').addEventListener("click", () => {
+        const copy = JSON.parse(JSON.stringify(s));
+        copy.id = uid(); copy.sample = false; copy.favorite = false;
+        copy.created = todayISO(); copy.edited = todayISO();
+        const tf = (METHOD[s.method].sections.flatMap(x => x.fields).find(f => f.title) || {}).id;
+        if(tf && copy.data[tf]) copy.data[tf] = copy.data[tf] + " (copy)";
+        S.studies.unshift(copy); save(); paint(); toast("Study duplicated");
+      });
+      card.querySelector('[data-a="del"]').addEventListener("click", () => {
+        confirmModal({
+          title:"Delete this study?", body:"“" + esc(studyTitle(s)) + "” will be removed from this device. This cannot be undone.",
+          confirmLabel:"Delete study", danger:true,
+          onConfirm:() => {
+            S.studies = S.studies.filter(x => x.id !== s.id);
+            if(S.lastStudyId === s.id) S.lastStudyId = S.studies[0] ? S.studies[0].id : null;
+            save(); paint(); toast("Study deleted");
+          }
+        });
+      });
+      list.appendChild(card);
+    });
+  }
+  paint();
+};
+
+/* ---------------- READING TRACKER ---------------- */
+VIEWS.reading = v => {
+  v.innerHTML = head("Bible reading tracker", "Start wherever you are. Tap a book once when you begin it, again when you finish.", "No calendar, no catching up");
+
+  const st = b => S.reading[b] || "none";
+  const countDone = arr => arr.filter(b => st(b) === "done").length;
+  const otDone = countDone(OT), ntDone = countDone(NT), all = otDone + ntDone;
+  const pct = Math.round((all / 66) * 100);
+  const C = 2 * Math.PI * 62;
+
+  const top = el("div", {class:"card"});
+  top.innerHTML =
+    '<div class="ring-wrap">' +
+      '<div class="ring"><svg width="148" height="148" viewBox="0 0 148 148">' +
+        '<circle class="ring-bg" cx="74" cy="74" r="62" fill="none" stroke-width="9"/>' +
+        '<circle class="ring-fg" cx="74" cy="74" r="62" fill="none" stroke-width="9" ' +
+          'stroke-dasharray="' + C + '" stroke-dashoffset="' + (C - C * pct / 100) + '"/>' +
+      '</svg><div class="ring-label"><div class="n">' + pct + '%</div><div class="l">of the Bible</div></div></div>' +
+      '<div style="flex:1;min-width:230px;">' +
+        '<div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;font-size:.84rem;"><span>Old Testament</span><span style="color:var(--muted);">' + otDone + ' of 39</span></div>' +
+          '<div class="bar"><span style="width:' + Math.round(otDone / 39 * 100) + '%"></span></div></div>' +
+        '<div style="margin-bottom:16px;"><div style="display:flex;justify-content:space-between;font-size:.84rem;"><span>New Testament</span><span style="color:var(--muted);">' + ntDone + ' of 27</span></div>' +
+          '<div class="bar rose"><span style="width:' + Math.round(ntDone / 27 * 100) + '%"></span></div></div>' +
+        '<div style="display:flex;gap:26px;flex-wrap:wrap;">' +
+          '<div><div class="n" style="font-family:var(--display);font-size:1.7rem;color:var(--olive);">' + all + '</div><div style="font-size:.76rem;color:var(--muted);">Books completed</div></div>' +
+          '<div><div style="font-family:var(--display);font-size:1.7rem;color:var(--olive);">' + streak() + '</div><div style="font-size:.76rem;color:var(--muted);">Day streak</div></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  v.appendChild(top);
+
+  const legend = el("div", {class:"legend", style:"margin-top:26px;"},
+    '<span><i></i>Not started</span><span><i style="background:var(--rose);border-color:var(--rose);"></i>Reading</span><span><i style="background:var(--sage);border-color:var(--sage);"></i>Completed</span>');
+  v.appendChild(legend);
+
+  [["Old Testament", OT], ["New Testament", NT]].forEach(([label, books]) => {
+    v.appendChild(el("div", {class:"section-title"}, "<h2>" + label + "</h2>"));
+    const g = el("div", {class:"books"});
+    books.forEach(b => {
+      const btn = el("button", {class:"book", type:"button", "data-status":st(b)},
+        '<span class="dot"></span><span class="bn">' + esc(b) + '</span>');
+      btn.setAttribute("aria-label", b + " — " + ({none:"not started", reading:"reading", done:"completed"}[st(b)]));
+      btn.addEventListener("click", () => {
+        const next = {none:"reading", reading:"done", done:"none"}[st(b)];
+        if(next === "none") delete S.reading[b]; else S.reading[b] = next;
+        markActivity(); save();
+        go("reading");
+        toast(b + " — " + ({none:"not started", reading:"reading now", done:"completed"}[next]));
+      });
+      g.appendChild(btn);
+    });
+    v.appendChild(g);
+  });
+};
+
+/* ---------------- shared entry list ---------------- */
+function entryList(container, rows, opts){
+  container.innerHTML = "";
+  if(!rows.length){
+    container.appendChild(emptyState(opts.emptyTitle, opts.emptyLine, opts.emptyBtn, opts.onEmpty));
+    return;
+  }
+  rows.forEach(r => {
+    const card = el("div", {class:"row-card"});
+    card.innerHTML =
+      '<div class="rc-main"><h3>' + esc(opts.title(r)) + '</h3>' +
+        '<div class="rc-excerpt">' + esc(opts.excerpt(r)) + '</div>' +
+        '<div class="rc-meta">' + opts.meta(r) + '</div></div>' +
+      '<div class="rc-actions">' + favBtn(r.favorite) +
+        '<button type="button" class="btn ghost sm" data-a="edit">Open</button>' +
+        '<button type="button" class="btn quiet sm" data-a="del">Delete</button></div>';
+    card.querySelector(".fav").addEventListener("click", () => { r.favorite = !r.favorite; save(); opts.repaint(); });
+    card.querySelector('[data-a="edit"]').addEventListener("click", () => opts.edit(r));
+    card.querySelector('[data-a="del"]').addEventListener("click", () => {
+      confirmModal({
+        title:opts.delTitle, body:"This entry will be removed from this device. This cannot be undone.",
+        confirmLabel:"Delete", danger:true,
+        onConfirm:() => { opts.del(r); save(); opts.repaint(); toast("Entry deleted"); }
+      });
+    });
+    container.appendChild(card);
+  });
+}
+
+/* ---------------- PRAYER & REFLECTION ---------------- */
+VIEWS.prayer = v => {
+  v.innerHTML = head("Prayer & reflection", "A place to pray on paper and sit with what is on your heart.", "Pause. Reflect. Pray.");
+
+  let editingPrayer = route.param ? S.prayers.find(p => p.id === route.param) : null;
+  const pd = editingPrayer || {date:todayISO(), cat:"Guidance", body:""};
+
+  const form = el("div", {class:"paper"});
+  form.innerHTML =
+    '<div class="paper-head"><div><h2>Prayer journal</h2>' +
+      '<div class="sub">' + (editingPrayer ? "Editing an entry from " + fmtDate(editingPrayer.date) : "Write it out — there is no wrong way to do this.") + '</div></div></div>' +
+    '<div class="grid c2">' +
+      '<label class="field" for="prDate"><span class="lbl">Date</span><input type="date" id="prDate" value="' + esc(pd.date) + '"></label>' +
+      '<label class="field" for="prCat"><span class="lbl">Prayer category</span><select id="prCat">' +
+        PRAYER_CATS.map(c => '<option' + (pd.cat === c ? " selected" : "") + '>' + esc(c) + '</option>').join("") + '</select></label>' +
+    '</div>' +
+    '<label class="field" for="prBody"><span class="lbl">Prayer</span>' +
+      '<textarea id="prBody" rows="7" placeholder="Say it plainly.">' + esc(pd.body) + '</textarea></label>' +
+    '<div class="btn-row no-print"><button type="button" class="btn" id="prSave">' + (editingPrayer ? "Save changes" : "Save prayer") + '</button>' +
+      '<button type="button" class="btn ghost" id="prPrint">Print or save as PDF</button>' +
+      (editingPrayer ? '<button type="button" class="btn quiet" id="prCancel">Cancel</button>' : "") + '</div>' +
+    '<div class="print-foot">Scripture Study Studio · Belalumi Studio</div>';
+  v.appendChild(form);
+
+  $("#prSave", form).addEventListener("click", () => {
+    const body = $("#prBody", form).value.trim();
+    if(!body){ toast("Write something first"); $("#prBody", form).focus(); return; }
+    if(editingPrayer){
+      Object.assign(editingPrayer, {date:$("#prDate", form).value, cat:$("#prCat", form).value, body, sample:false});
+    } else {
+      S.prayers.unshift({id:uid(), favorite:false, sample:false,
+        date:$("#prDate", form).value, cat:$("#prCat", form).value, body});
+    }
+    markActivity(); save(); toast("Prayer saved"); go("prayer");
+  });
+  $("#prPrint", form).addEventListener("click", () => window.print());
+  if(editingPrayer) $("#prCancel", form).addEventListener("click", () => go("prayer"));
+
+  // Reflection
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Reflection</h2>"));
+  const rq = [
+    ["heart","What is on my heart today?"],
+    ["learning","What am I learning?"],
+    ["surrender","What am I surrendering?"],
+    ["grateful","What am I grateful for?"],
+    ["remember","What do I want to remember?"]
+  ];
+  const rform = el("div", {class:"paper"});
+  rform.innerHTML =
+    '<div class="paper-head"><div><h2>Today\u2019s reflection</h2>' +
+    '<div class="sub">Answer one or answer all. Both count.</div></div></div>' +
+    rq.map(([k, q]) => '<label class="field" for="rf_' + k + '"><span class="lbl">' + esc(q) + '</span>' +
+      '<textarea id="rf_' + k + '" data-r="' + k + '" rows="3"></textarea></label>').join("") +
+    '<div class="btn-row no-print"><button type="button" class="btn" id="rfSave">Save reflection</button>' +
+    '<button type="button" class="btn ghost" id="rfPrint">Print or save as PDF</button></div>' +
+    '<div class="print-foot">Scripture Study Studio · Belalumi Studio</div>';
+  v.appendChild(rform);
+
+  $("#rfSave", rform).addEventListener("click", () => {
+    const data = {};
+    let any = false;
+    $$("[data-r]", rform).forEach(t => { data[t.dataset.r] = t.value.trim(); if(t.value.trim()) any = true; });
+    if(!any){ toast("Write something first"); return; }
+    S.reflections.unshift({id:uid(), favorite:false, sample:false, date:todayISO(), data});
+    markActivity(); save(); toast("Reflection saved"); go("prayer");
+  });
+  $("#rfPrint", rform).addEventListener("click", () => window.print());
+
+  // Saved prayers
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Saved prayers</h2>"));
+  const pl = el("div", {class:"grid", style:"gap:12px;"});
+  v.appendChild(pl);
+  const paintP = () => entryList(pl, S.prayers, {
+    title:p => p.cat + " — " + fmtDate(p.date),
+    excerpt:p => p.body,
+    meta:p => '<span class="pill">' + esc(p.cat) + '</span>' + (p.sample ? '<span class="pill sample">Example entry</span>' : "") + '<span>' + fmtDate(p.date) + '</span>',
+    emptyTitle:"No prayers yet.", emptyLine:"Even a sentence counts. You can always come back and add to it.",
+    emptyBtn:"Write a prayer", onEmpty:() => $("#prBody", form).focus(),
+    edit:p => go("prayer", p.id),
+    del:p => { S.prayers = S.prayers.filter(x => x.id !== p.id); },
+    delTitle:"Delete this prayer?", repaint:() => paintP()
+  });
+  paintP();
+
+  // Saved reflections
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Saved reflections</h2>"));
+  const rl = el("div", {class:"grid", style:"gap:12px;"});
+  v.appendChild(rl);
+  const paintR = () => entryList(rl, S.reflections, {
+    title:r => "Reflection — " + fmtDate(r.date),
+    excerpt:r => Object.values(r.data).filter(Boolean).join(" · "),
+    meta:r => '<span>' + fmtDate(r.date) + '</span>',
+    emptyTitle:"No reflections yet.", emptyLine:"Start with whichever question you can answer honestly today.",
+    emptyBtn:null,
+    edit:r => {
+      openModal('<h2 id="modalTitle">Reflection</h2><div class="sub" style="color:var(--muted);font-size:.84rem;margin-bottom:14px;">' + fmtDate(r.date) + '</div>' +
+        rq.map(([k, q]) => r.data[k] ? '<div class="x-k" style="font-size:.78rem;font-weight:600;color:var(--olive);">' + esc(q) + '</div><p>' + esc(r.data[k]) + '</p>' : "").join("") +
+        '<div class="btn-row"><button class="btn ghost" data-x="close">Close</button></div>');
+      $('[data-x="close"]').addEventListener("click", closeModal);
+    },
+    del:r => { S.reflections = S.reflections.filter(x => x.id !== r.id); },
+    delTitle:"Delete this reflection?", repaint:() => paintR()
+  });
+  paintR();
+};
+
+/* ---------------- SERMON NOTES ---------------- */
+const SERMON_FIELDS = [
+  ["date","Date","date"], ["speaker","Church or speaker","text"], ["title","Message title","text"], ["passage","Bible passage","text"],
+  ["point","Main point","area",3], ["scriptures","Key Scriptures","area",3], ["notes","Notes","area",9],
+  ["stood","What stood out?","area",3], ["learned","What did I learn?","area",3], ["apply","How can I apply this?","area",3],
+  ["prayer","Prayer","area",4], ["truth","One truth I want to remember","box",2]
+];
+VIEWS.sermons = v => {
+  v.innerHTML = head("Sermon notes", "Catch it while it is fresh, and keep the one line you want to carry home.", "Sunday, and every day after");
+  const editing = route.param ? S.sermons.find(s => s.id === route.param) : null;
+  const d = editing || {date:todayISO()};
+
+  const form = el("div", {class:"paper"});
+  form.innerHTML =
+    '<div class="paper-head"><div><h2>' + (editing ? "Edit notes" : "New sermon notes") + '</h2>' +
+    '<div class="sub">Write what stands out. You do not need every word.</div></div></div>' +
+    '<div class="grid c2">' +
+      SERMON_FIELDS.slice(0,4).map(([k,l,t]) =>
+        '<label class="field" for="sn_' + k + '"><span class="lbl">' + esc(l) + '</span>' +
+        '<input type="' + (t === "date" ? "date" : "text") + '" id="sn_' + k + '" data-s="' + k + '" value="' + esc(d[k] || "") + '"></label>').join("") +
+    '</div>' +
+    SERMON_FIELDS.slice(4).map(([k,l,t,rows]) =>
+      t === "box"
+        ? '<div class="field"><div class="onesentence"><label class="lbl" for="sn_' + k + '">' + esc(l) + '</label>' +
+          '<textarea id="sn_' + k + '" data-s="' + k + '" rows="' + rows + '">' + esc(d[k] || "") + '</textarea></div></div>'
+        : '<label class="field" for="sn_' + k + '"><span class="lbl">' + esc(l) + '</span>' +
+          '<textarea id="sn_' + k + '" data-s="' + k + '" rows="' + rows + '">' + esc(d[k] || "") + '</textarea></label>').join("") +
+    '<div class="btn-row no-print"><button type="button" class="btn" id="snSave">' + (editing ? "Save changes" : "Save notes") + '</button>' +
+    '<button type="button" class="btn ghost" id="snPrint">Print or save as PDF</button>' +
+    (editing ? '<button type="button" class="btn quiet" id="snCancel">Cancel</button>' : "") + '</div>' +
+    '<div class="print-foot">Scripture Study Studio · Belalumi Studio</div>';
+  v.appendChild(form);
+
+  $("#snSave", form).addEventListener("click", () => {
+    const obj = {};
+    $$("[data-s]", form).forEach(i => obj[i.dataset.s] = i.value.trim());
+    if(!obj.title && !obj.notes){ toast("Add a title or some notes first"); return; }
+    if(editing) Object.assign(editing, obj, {sample:false});
+    else S.sermons.unshift(Object.assign({id:uid(), favorite:false, sample:false}, obj));
+    markActivity(); save(); toast("Notes saved"); go("sermons");
+  });
+  $("#snPrint", form).addEventListener("click", () => window.print());
+  if(editing) $("#snCancel", form).addEventListener("click", () => go("sermons"));
+
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Saved notes</h2>"));
+  const list = el("div", {class:"grid", style:"gap:12px;"});
+  v.appendChild(list);
+  const paint = () => entryList(list, S.sermons, {
+    title:s => s.title || "Untitled message",
+    excerpt:s => s.point || s.notes || "",
+    meta:s => (s.speaker ? '<span class="pill">' + esc(s.speaker) + '</span>' : "") +
+      (s.sample ? '<span class="pill sample">Example entry</span>' : "") +
+      (s.passage ? '<span>' + esc(s.passage) + '</span>' : "") + '<span>' + fmtDate(s.date) + '</span>',
+    emptyTitle:"No sermon notes yet.", emptyLine:"Next Sunday, bring this instead of a spare envelope.",
+    emptyBtn:null,
+    edit:s => go("sermons", s.id),
+    del:s => { S.sermons = S.sermons.filter(x => x.id !== s.id); },
+    delTitle:"Delete these notes?", repaint:() => paint()
+  });
+  paint();
+};
+
+/* ---------------- GRATITUDE ---------------- */
+VIEWS.gratitude = v => {
+  v.innerHTML = head("30 days of gratitude", "Start today, whatever the date. Complete the days in any order you like.", "Small moments, noticed on purpose");
+
+  const done = Object.values(S.gratitude).filter(g => g && g.done).length;
+  const current = route.param ? Number(route.param) : (() => {
+    for(let i = 1; i <= 30; i++) if(!(S.gratitude[i] && S.gratitude[i].done)) return i;
+    return 1;
+  })();
+
+  const top = el("div", {class:"card"});
+  top.innerHTML =
+    '<div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;margin-bottom:18px;">' +
+      '<div><div style="font-family:var(--display);font-size:1.9rem;color:var(--olive);">' + done + ' of 30</div>' +
+      '<div style="font-size:.78rem;color:var(--muted);">days completed</div></div>' +
+      '<div style="flex:1;min-width:200px;"><div class="bar"><span style="width:' + Math.round(done/30*100) + '%"></span></div></div>' +
+    '</div><div class="g-grid"></div>';
+  const grid = top.querySelector(".g-grid");
+  for(let i = 1; i <= 30; i++){
+    const b = el("button", {class:"g-day", type:"button",
+      "data-done": (S.gratitude[i] && S.gratitude[i].done) ? "true" : "false",
+      "aria-current": i === current ? "true" : "false",
+      "aria-label":"Day " + i + ((S.gratitude[i] && S.gratitude[i].done) ? " — completed" : "")}, String(i));
+    b.addEventListener("click", () => go("gratitude", i));
+    grid.appendChild(b);
+  }
+  v.appendChild(top);
+
+  const g = S.gratitude[current] || {date:todayISO(), grateful:"", why:"", goodness:"", done:false};
+  const form = el("div", {class:"paper", style:"margin-top:26px;"});
+  form.innerHTML =
+    '<div class="paper-head"><div><h2>Day ' + current + '</h2>' +
+    '<div class="sub">' + (g.done ? "Completed " + fmtDate(g.date) : "Not completed yet") + '</div></div></div>' +
+    '<label class="field" for="gDate"><span class="lbl">Date</span><input type="date" id="gDate" value="' + esc(g.date || todayISO()) + '"></label>' +
+    '<label class="field" for="gA"><span class="lbl">What are you grateful for today?</span><textarea id="gA" rows="3">' + esc(g.grateful) + '</textarea></label>' +
+    '<label class="field" for="gB"><span class="lbl">Why?</span><textarea id="gB" rows="3">' + esc(g.why) + '</textarea></label>' +
+    '<label class="field" for="gC"><span class="lbl">How did you see God\u2019s goodness today?</span><textarea id="gC" rows="3">' + esc(g.goodness) + '</textarea></label>' +
+    '<div class="btn-row no-print"><button type="button" class="btn" id="gSave">Save day ' + current + '</button>' +
+    '<button type="button" class="btn ghost" id="gPrint">Print or save as PDF</button>' +
+    (g.done ? '<button type="button" class="btn quiet" id="gUndo">Mark as not complete</button>' : "") +
+    (current < 30 ? '<button type="button" class="btn quiet" id="gNext">Next day</button>' : "") + '</div>' +
+    '<div class="print-foot">Scripture Study Studio · Belalumi Studio</div>';
+  v.appendChild(form);
+
+  $("#gSave", form).addEventListener("click", () => {
+    const grateful = $("#gA", form).value.trim();
+    if(!grateful){ toast("Write one thing first"); $("#gA", form).focus(); return; }
+    S.gratitude[current] = {
+      date:$("#gDate", form).value || todayISO(), grateful,
+      why:$("#gB", form).value.trim(), goodness:$("#gC", form).value.trim(), done:true
+    };
+    markActivity(); save(); toast("Day " + current + " saved");
+    go("gratitude", current < 30 ? current + 1 : current);
+  });
+  $("#gPrint", form).addEventListener("click", () => window.print());
+  if(g.done) $("#gUndo", form).addEventListener("click", () => {
+    S.gratitude[current].done = false; save(); go("gratitude", current);
+  });
+  if(current < 30) $("#gNext", form).addEventListener("click", () => go("gratitude", current + 1));
+};
+
+/* ---------------- JOURNAL ---------------- */
+let journalFilters = {q:"", cat:""};
+VIEWS.journal = v => {
+  v.innerHTML = head("Journal", "Write freely. Nothing here has to be tidy.", "Your own words");
+
+  const editing = route.param ? S.journal.find(j => j.id === route.param) : null;
+  const seedPrompt = route.sub || "";
+  const d = editing || {title:"", date:todayISO(), cat:"Blank entry", body:seedPrompt ? seedPrompt + "\n\n" : ""};
+
+  const form = el("div", {class:"paper"});
+  form.innerHTML =
+    '<div class="paper-head"><div><h2>' + (editing ? "Edit entry" : "New entry") + '</h2>' +
+    '<div class="sub">' + (seedPrompt ? "Writing from today\u2019s prompt" : "Take your time.") + '</div></div></div>' +
+    '<div class="grid c2">' +
+      '<label class="field" for="jTitle"><span class="lbl">Title</span><input type="text" id="jTitle" value="' + esc(d.title) + '" placeholder="A few words is enough"></label>' +
+      '<label class="field" for="jDate"><span class="lbl">Date</span><input type="date" id="jDate" value="' + esc(d.date) + '"></label>' +
+    '</div>' +
+    '<label class="field" for="jCat"><span class="lbl">Category</span><select id="jCat">' +
+      JOURNAL_CATS.map(c => '<option' + (d.cat === c ? " selected" : "") + '>' + esc(c) + '</option>').join("") + '</select></label>' +
+    '<label class="field" for="jBody"><span class="lbl">Entry</span><textarea id="jBody" rows="10">' + esc(d.body) + '</textarea></label>' +
+    '<div class="btn-row no-print"><button type="button" class="btn" id="jSave">' + (editing ? "Save changes" : "Save entry") + '</button>' +
+    '<button type="button" class="btn ghost" id="jPrint">Print or save as PDF</button>' +
+    '<button type="button" class="btn quiet" id="jPrompt">Use a prompt</button>' +
+    (editing ? '<button type="button" class="btn quiet" id="jCancel">Cancel</button>' : "") + '</div>' +
+    '<div class="print-foot">Scripture Study Studio · Belalumi Studio</div>';
+  v.appendChild(form);
+
+  $("#jSave", form).addEventListener("click", () => {
+    const body = $("#jBody", form).value.trim();
+    if(!body){ toast("Write something first"); $("#jBody", form).focus(); return; }
+    const obj = {title:$("#jTitle", form).value.trim() || "Untitled entry", date:$("#jDate", form).value, cat:$("#jCat", form).value, body};
+    if(editing) Object.assign(editing, obj, {sample:false});
+    else S.journal.unshift(Object.assign({id:uid(), favorite:false, sample:false}, obj));
+    markActivity(); save(); toast("Entry saved"); go("journal");
+  });
+  $("#jPrint", form).addEventListener("click", () => window.print());
+  if(editing) $("#jCancel", form).addEventListener("click", () => go("journal"));
+  $("#jPrompt", form).addEventListener("click", () => {
+    openModal('<h2 id="modalTitle">Choose a prompt</h2><p>Pick one to start from. You can write past it.</p>' +
+      '<div style="max-height:46vh;overflow-y:auto;margin-top:8px;">' +
+      PROMPTS.map((p, i) => '<button type="button" class="btn quiet" style="display:block;width:100%;text-align:left;padding:10px 12px;font-family:var(--display);font-size:1.05rem;" data-p="' + i + '">' + esc(p) + '</button>').join("") +
+      '</div><div class="btn-row"><button class="btn ghost" data-x="close">Close</button></div>');
+    $('[data-x="close"]').addEventListener("click", closeModal);
+    $$("[data-p]").forEach(b => b.addEventListener("click", () => {
+      const ta = $("#jBody", form);
+      ta.value = PROMPTS[b.dataset.p] + "\n\n" + ta.value;
+      closeModal(); ta.focus();
+    }));
+  });
+
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Saved entries</h2>"));
+  const bar = el("div", {class:"toolbar"});
+  bar.innerHTML =
+    '<div class="search">' + I.search + '<input type="search" id="jq" placeholder="Search your entries" value="' + esc(journalFilters.q) + '"></div>' +
+    '<select id="jc"><option value="">All categories</option>' +
+      JOURNAL_CATS.map(c => '<option' + (journalFilters.cat === c ? " selected" : "") + '>' + esc(c) + '</option>').join("") + '</select>';
+  v.appendChild(bar);
+  const list = el("div", {class:"grid", style:"gap:12px;"});
+  v.appendChild(list);
+
+  function paint(){
+    let rows = S.journal.slice();
+    if(journalFilters.cat) rows = rows.filter(r => r.cat === journalFilters.cat);
+    const q = journalFilters.q.trim().toLowerCase();
+    if(q) rows = rows.filter(r => (r.title + " " + r.body + " " + r.cat).toLowerCase().includes(q));
+    entryList(list, rows, {
+      title:j => j.title,
+      excerpt:j => j.body,
+      meta:j => '<span class="pill">' + esc(j.cat) + '</span>' + (j.sample ? '<span class="pill sample">Example entry</span>' : "") + '<span>' + fmtDate(j.date) + '</span>',
+      emptyTitle: S.journal.length ? "Nothing matches that." : "No entries yet.",
+      emptyLine: S.journal.length ? "Try a different word or clear the filter." : "Start with one sentence about today. That is a real entry.",
+      emptyBtn:null,
+      edit:j => go("journal", j.id),
+      del:j => { S.journal = S.journal.filter(x => x.id !== j.id); },
+      delTitle:"Delete this entry?", repaint:paint
+    });
+  }
+  $("#jq", bar).addEventListener("input", e => { journalFilters.q = e.target.value; paint(); });
+  $("#jc", bar).addEventListener("change", e => { journalFilters.cat = e.target.value; paint(); });
+  paint();
+};
+
+/* ---------------- FAVORITES ---------------- */
+VIEWS.favorites = v => {
+  v.innerHTML = head("Favorites", "The pages and words you want to find again quickly.", "Come back to this truth later");
+
+  const blocks = [
+    ["Studies", S.studies.filter(s => s.favorite), s => studyTitle(s), s => METHOD[s.method].name, s => go("worksheet", s.method, s.id)],
+    ["Journal entries", S.journal.filter(j => j.favorite), j => j.title, j => j.cat, j => go("journal", j.id)],
+    ["Prayers", S.prayers.filter(p => p.favorite), p => p.cat + " — " + fmtDate(p.date), p => p.body.slice(0, 80), p => go("prayer", p.id)],
+    ["Sermon notes", S.sermons.filter(s => s.favorite), s => s.title || "Untitled message", s => s.speaker || "", s => go("sermons", s.id)]
+  ];
+
+  let any = false;
+  blocks.forEach(([label, rows, title, sub, open]) => {
+    if(!rows.length) return;
+    any = true;
+    v.appendChild(el("div", {class:"section-title"}, "<h2>" + label + "</h2>"));
+    const g = el("div", {class:"grid", style:"gap:12px;"});
+    rows.forEach(r => {
+      const c = el("div", {class:"row-card"});
+      c.innerHTML = '<div class="rc-main"><h3>' + esc(title(r)) + '</h3><div class="rc-meta"><span>' + esc(sub(r)) + '</span></div></div>' +
+        '<div class="rc-actions"><button type="button" class="btn ghost sm">Open</button>' +
+        '<button type="button" class="btn quiet sm" data-a="unfav">Remove</button></div>';
+      c.querySelector(".btn.ghost").addEventListener("click", () => open(r));
+      c.querySelector('[data-a="unfav"]').addEventListener("click", () => { r.favorite = false; save(); go("favorites"); });
+      g.appendChild(c);
+    });
+    v.appendChild(g);
+  });
+
+  // Favourite passages
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Bible passages</h2>"));
+  const pass = el("div", {class:"card"});
+  pass.innerHTML =
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">' +
+      '<label class="field" style="flex:1;min-width:200px;margin:0;" for="fpRef"><span class="lbl">Save a passage</span>' +
+      '<input type="text" id="fpRef" placeholder="e.g. Isaiah 43:1–3"></label>' +
+      '<button type="button" class="btn sm" id="fpAdd">Save passage</button></div>' +
+    '<div id="fpList" style="margin-top:16px;"></div>';
+  v.appendChild(pass);
+  const paintPass = () => {
+    const l = $("#fpList", pass);
+    l.innerHTML = S.favPassages.length
+      ? '<div class="chip-row">' + S.favPassages.map((p, i) =>
+          '<span class="chip" style="cursor:default;">' + esc(p) +
+          ' <button type="button" class="btn quiet" style="min-height:auto;padding:0 4px;" data-rmp="' + i + '" aria-label="Remove ' + esc(p) + '">×</button></span>').join("") + '</div>'
+      : '<p style="color:var(--muted);font-size:.88rem;margin:0;">No passages saved yet. Add the references you keep returning to.</p>';
+    $$("[data-rmp]", l).forEach(b => b.addEventListener("click", () => {
+      S.favPassages.splice(Number(b.dataset.rmp), 1); save(); paintPass();
+    }));
+  };
+  $("#fpAdd", pass).addEventListener("click", () => {
+    const val = $("#fpRef", pass).value.trim();
+    if(!val) return;
+    S.favPassages.push(val); $("#fpRef", pass).value = ""; save(); paintPass(); toast("Passage saved");
+  });
+  paintPass();
+
+  // Favourite prompts
+  v.appendChild(el("div", {class:"section-title"}, "<h2>Reflection prompts</h2>"));
+  const pl = el("div", {class:"card"});
+  const paintPrompts = () => {
+    pl.innerHTML = '<p style="font-size:.86rem;color:var(--muted);">Tap a heart to keep a prompt here.</p><div id="prList"></div>';
+    const holder = $("#prList", pl);
+    const show = S.favPrompts.length ? S.favPrompts.map(i => [i, PROMPTS[i]]) : [];
+    holder.innerHTML = show.length
+      ? show.map(([i, t]) => '<div style="display:flex;gap:10px;align-items:center;border-top:1px solid var(--line-soft);padding:10px 0;">' +
+          '<span style="flex:1;font-family:var(--display);font-size:1.1rem;">' + esc(t) + '</span>' +
+          '<button type="button" class="btn quiet sm" data-rmq="' + i + '">Remove</button></div>').join("")
+      : '<p style="color:var(--muted);font-size:.88rem;">No prompts saved yet.</p>';
+    $$("[data-rmq]", holder).forEach(b => b.addEventListener("click", () => {
+      S.favPrompts = S.favPrompts.filter(x => x !== Number(b.dataset.rmq)); save(); paintPrompts();
+    }));
+  };
+  paintPrompts();
+  v.appendChild(pl);
+
+  const browse = el("div", {class:"card", style:"margin-top:16px;"});
+  browse.innerHTML = '<h3 style="font-size:1.3rem;margin-bottom:10px;">All reflection prompts</h3>' +
+    '<div style="max-height:320px;overflow-y:auto;">' +
+    PROMPTS.map((p, i) => '<div style="display:flex;gap:10px;align-items:center;border-top:1px solid var(--line-soft);padding:8px 0;">' +
+      '<span style="flex:1;font-size:.94rem;">' + esc(p) + '</span>' +
+      '<button type="button" class="fav" data-favq="' + i + '" aria-pressed="' + (S.favPrompts.includes(i) ? "true" : "false") + '" aria-label="Favourite this prompt">' +
+      (S.favPrompts.includes(i) ? I.heartFill : I.heartLine) + '</button></div>').join("") + '</div>';
+  $$("[data-favq]", browse).forEach(b => b.addEventListener("click", () => {
+    const i = Number(b.dataset.favq);
+    S.favPrompts = S.favPrompts.includes(i) ? S.favPrompts.filter(x => x !== i) : S.favPrompts.concat([i]);
+    save(); go("favorites");
+  }));
+  v.appendChild(browse);
+
+  if(!any && !S.favPassages.length && !S.favPrompts.length){
+    v.insertBefore(emptyState("Nothing saved yet.", "Tap the heart on any study, entry or prompt and it will wait for you here.", "Browse your studies", () => go("studies")), v.children[1]);
+  }
+};
+
+/* ---------------- SETTINGS ---------------- */
+function applySettings(){
+  document.documentElement.setAttribute("data-theme", S.settings.theme || "light");
+  document.documentElement.setAttribute("data-printfoot", S.settings.printNotes === false ? "off" : "on");
+  document.documentElement.style.setProperty("--fs", (S.settings.fontSize || 16) + "px");
+}
+
+VIEWS.settings = v => {
+  v.innerHTML = head("Settings", "Adjust how the studio looks, and keep a copy of your work.", "Make it yours");
+
+  const look = el("div", {class:"card"});
+  look.innerHTML =
+    '<h3 style="font-size:1.4rem;margin-bottom:14px;">Appearance</h3>' +
+    '<div class="field"><span class="lbl">Theme</span><div class="chip-row">' +
+      '<button type="button" class="chip" data-theme="light" aria-pressed="' + (S.settings.theme === "light") + '">Light</button>' +
+      '<button type="button" class="chip" data-theme="dark" aria-pressed="' + (S.settings.theme === "dark") + '">Dark</button>' +
+    '</div></div>' +
+    '<label class="field" for="fsRange"><span class="lbl">Text size — ' + S.settings.fontSize + 'px</span>' +
+      '<input type="range" id="fsRange" min="14" max="22" step="1" value="' + S.settings.fontSize + '" style="width:100%;accent-color:var(--olive);"></label>' +
+    '<div class="field" style="margin-bottom:0;"><span class="lbl">Printing</span>' +
+      '<label style="display:flex;gap:10px;align-items:flex-start;font-size:.92rem;">' +
+      '<input type="checkbox" id="pn" ' + (S.settings.printNotes ? "checked" : "") + ' style="width:auto;margin-top:4px;accent-color:var(--olive);">' +
+      '<span>Include the Scripture Study Studio footer on printed pages</span></label></div>';
+  v.appendChild(look);
+
+  $$("[data-theme]", look).forEach(b => b.addEventListener("click", () => {
+    S.settings.theme = b.dataset.theme; save(); applySettings(); go("settings");
+  }));
+  $("#fsRange", look).addEventListener("input", e => {
+    S.settings.fontSize = Number(e.target.value);
+    document.documentElement.style.setProperty("--fs", S.settings.fontSize + "px");
+    look.querySelector('label[for="fsRange"] .lbl').textContent = "Text size — " + S.settings.fontSize + "px";
+    save();
+  });
+  $("#pn", look).addEventListener("change", e => {
+    S.settings.printNotes = e.target.checked; save(); applySettings();
+  });
+
+  // Data
+  const data = el("div", {class:"card", style:"margin-top:18px;"});
+  const counts = S.studies.length + S.journal.length + S.prayers.length + S.reflections.length + S.sermons.length;
+  data.innerHTML =
+    '<h3 style="font-size:1.4rem;margin-bottom:8px;">Your data</h3>' +
+    '<p style="font-size:.9rem;color:var(--muted);">Your personal entries are stored locally on this device. No account is required, and nothing you write is sent anywhere. ' +
+    'That also means clearing your browser data will remove them, so export a copy from time to time.</p>' +
+    '<p style="font-size:.86rem;color:var(--muted);">You currently have ' + counts + ' saved ' + (counts === 1 ? "entry" : "entries") + ', plus ' +
+    Object.keys(S.reading).length + ' books tracked.</p>' +
+    '<div class="btn-row" style="margin-top:16px;">' +
+      '<button type="button" class="btn ghost" id="expBtn">Export my data</button>' +
+      '<button type="button" class="btn ghost" id="impBtn">Import my data</button>' +
+      '<button type="button" class="btn danger" id="clrBtn">Clear all data</button>' +
+    '</div><input type="file" id="impFile" accept="application/json" hidden>';
+  v.appendChild(data);
+
+  $("#expBtn", data).addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(S, null, 2)], {type:"application/json"});
+    const a = el("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "scripture-study-studio-" + todayISO() + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    toast("Data exported");
+  });
+  $("#impBtn", data).addEventListener("click", () => $("#impFile", data).click());
+  $("#impFile", data).addEventListener("change", e => {
+    const file = e.target.files[0];
+    if(!file) return;
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const incoming = JSON.parse(r.result);
+        if(!incoming || typeof incoming !== "object" || !("studies" in incoming)) throw new Error("bad file");
+        confirmModal({
+          title:"Replace what is here?",
+          body:"Importing will replace the studies and entries currently on this device with the ones in that file.",
+          confirmLabel:"Import and replace",
+          onConfirm:() => {
+            S = Object.assign(blankState(), incoming);
+            S.settings = Object.assign(blankState().settings, incoming.settings || {});
+            save(); applySettings(); go("home"); toast("Data imported");
+          }
+        });
+      }catch(err){
+        toast("That file could not be read");
+      }
+      e.target.value = "";
+    };
+    r.readAsText(file);
+  });
+  $("#clrBtn", data).addEventListener("click", () => {
+    confirmModal({
+      title:"Clear all data?",
+      body:"Every study, journal entry, prayer, sermon note and reading mark on this device will be removed. This cannot be undone. Export a copy first if you want to keep it.",
+      confirmLabel:"Clear everything", danger:true,
+      onConfirm:() => {
+        const theme = S.settings.theme, fs = S.settings.fontSize;
+        localStorage.removeItem(KEY);
+        S = blankState();
+        S.settings.theme = theme; S.settings.fontSize = fs;
+        S.onboarded = true;
+        save(); applySettings(); go("home"); toast("All data cleared");
+      }
+    });
+  });
+
+  const sample = S.studies.some(s => s.sample) || S.journal.some(j => j.sample) || S.prayers.some(p => p.sample) || S.sermons.some(s => s.sample);
+  if(sample){
+    const sc = el("div", {class:"card", style:"margin-top:18px;"});
+    sc.innerHTML = '<h3 style="font-size:1.4rem;margin-bottom:8px;">Sample content</h3>' +
+      '<p style="font-size:.9rem;color:var(--muted);">The studio came with a few labelled examples so the pages were not empty on your first visit. Remove them whenever you like.</p>' +
+      '<button type="button" class="btn ghost" id="rmSample">Remove sample content</button>';
+    sc.querySelector("#rmSample").addEventListener("click", () => {
+      confirmModal({
+        title:"Remove the samples?", body:"Only the entries labelled as samples will be removed. Your own work stays.",
+        confirmLabel:"Remove samples",
+        onConfirm:() => {
+          S.studies = S.studies.filter(s => !s.sample);
+          S.journal = S.journal.filter(j => !j.sample);
+          S.prayers = S.prayers.filter(p => !p.sample);
+          S.sermons = S.sermons.filter(s => !s.sample);
+          if(!S.studies.find(s => s.id === S.lastStudyId)) S.lastStudyId = S.studies[0] ? S.studies[0].id : null;
+          save(); go("settings"); toast("Sample content removed");
+        }
+      });
+    });
+    v.appendChild(sc);
+  }
+
+  const about = el("div", {class:"card", style:"margin-top:18px;text-align:center;"});
+  about.innerHTML = I.sprigSm +
+    '<p style="font-family:var(--display);font-size:1.2rem;margin:10px 0 4px;">Scripture Study Studio</p>' +
+    '<p style="font-size:.82rem;color:var(--muted);margin:0;">Created by Belalumi Studio</p>';
+  v.appendChild(about);
+};
+
+/* ============================================================
+   ONBOARDING
+   ============================================================ */
+function showWelcome(){
+  openModal(
+    '<div class="welcome">' + I.sprigSm +
+    '<h2 id="modalTitle">Welcome to Scripture Study Studio</h2>' +
+    '<p>Learn how to study the Bible, create meaningful study notes, and build a consistent habit of spending time in God\u2019s Word.</p>' +
+    '<p style="font-size:.82rem;">Everything you write stays on this device. There is no account and no sign-in.</p>' +
+    '<div class="btn-row">' +
+      '<button type="button" class="btn" data-w="start">Start my first study</button>' +
+      '<button type="button" class="btn ghost" data-w="explore">Explore study methods</button>' +
+      '<button type="button" class="btn quiet" data-w="skip">Skip for now</button>' +
+    '</div></div>'
+  );
+  const finish = where => { S.onboarded = true; save(); closeModal(); if(where) go(where); };
+  $('[data-w="start"]').addEventListener("click", () => { S.onboarded = true; save(); closeModal(); go("worksheet", "soap"); });
+  $('[data-w="explore"]').addEventListener("click", () => finish("methods"));
+  $('[data-w="skip"]').addEventListener("click", () => finish(null));
+}
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+window.addEventListener("beforeunload", () => flushDraft());
+
+/* Collapsed sections would otherwise print blank, so open them for the
+   print job and restore whatever the reader had open afterwards. */
+let printReopen = [];
+window.addEventListener("beforeprint", () => {
+  flushDraft();
+  if(!printReopen.length) printReopen = $$("details.ws-section").filter(d => !d.open);
+  printReopen.forEach(d => d.open = true);
+});
+window.addEventListener("afterprint", () => {
+  printReopen.forEach(d => d.open = false);
+  printReopen = [];
+});
+
+(function init(){
+  const had = load();
+  if(!had){ seedSamples(); }
+  applySettings();
+  buildNav();
+  go("home");
+  if(!S.onboarded) setTimeout(showWelcome, 350);
+})();
+</script>
+</body>
+</html>
